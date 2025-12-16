@@ -56,4 +56,10 @@ public class ProcessTestController {
                 }).collect(Collectors.toList());
         return ResponseEntity.ok(tasks);
     }
+
+    @PostMapping("/tasks/{id}/complete")
+    public ResponseEntity<Void> completeTask(@PathVariable("id") String id) {
+        taskService.complete(id);
+        return ResponseEntity.ok().build();
+    }
 }
