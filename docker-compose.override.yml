@@ -1,0 +1,7 @@
+services:
+  db:
+    ports:
+      - "5433:5432"
+  flowable-app:
+    volumes:
+      - ./target/flowable7-server-0.1.0-SNAPSHOT.jar:/app/app.jar:ro
