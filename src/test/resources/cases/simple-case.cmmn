@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:cmmn xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.omg.org/spec/CMMN/20151109/MODEL https://www.omg.org/spec/CMMN/20151109/CMMNModel.xsd"
+          id="definitions">
+  <cmmn:case id="simpleCase" name="Simple Case">
+    <cmmn:casePlanModel id="planModel" name="Plan Model">
+      <cmmn:planFragment id="planFragment">
+        <cmmn:planItem id="planItem1" definitionRef="humanTask1" />
+      </cmmn:planFragment>
+
+      <cmmn:humanTask id="humanTask1" name="Review Task" />
+    </cmmn:casePlanModel>
+  </cmmn:case>
+</cmmn:cmmn>

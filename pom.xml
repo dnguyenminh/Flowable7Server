@@ -46,6 +46,19 @@
             <version>${flowable.version}</version>
         </dependency>
 
+        <!-- CMMN starter removed; we add the core engine below and will configure test usage explicitly -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-cmmn-engine</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <!-- DMN starter removed; core DMN engine added below for tests -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-dmn-engine</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
