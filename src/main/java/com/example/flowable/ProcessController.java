@@ -56,4 +56,16 @@ public class ProcessController {
                 }).collect(Collectors.toList());
         return ResponseEntity.ok(tasks);
     }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<List<Map<String, String>>> tasksByQuery(@RequestParam("processInstanceId") String processInstanceId) {
+        List<Map<String, String>> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list()
+                .stream().map(t -> {
+                    Map<String, String> m = new HashMap<>();
+                    m.put("id", t.getId());
+                    m.put("name", t.getName());
+                    return m;
+                }).collect(Collectors.toList());
+        return ResponseEntity.ok(tasks);
+    }
 }
