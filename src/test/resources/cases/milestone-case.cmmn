@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:cmmn xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.omg.org/spec/CMMN/20151109/MODEL https://www.omg.org/spec/CMMN/20151109/CMMNModel.xsd"
+          id="definitions">
+  <cmmn:case id="milestoneCase" name="Milestone Case">
+    <cmmn:casePlanModel id="planModel">
+        <cmmn:planFragment id="planFragment">
+        <cmmn:planItem id="planItem1" definitionRef="humanTask1" />
+        <cmmn:sentry id="sentry1">
+          <cmmn:onPart sourceRef="planItem1" standardEvent="complete" />
+        </cmmn:sentry>
+
+        <cmmn:planItem id="planItem2" definitionRef="milestone1">
+          <cmmn:entryCriterion id="entry1" sentryRef="sentry1" />
+        </cmmn:planItem>
+      </cmmn:planFragment>
+
+      <cmmn:humanTask id="humanTask1" name="Approve Task" />
+
+      <cmmn:milestone id="milestone1" name="Approved Milestone" />
+    </cmmn:casePlanModel>
+  </cmmn:case>
+</cmmn:cmmn>
