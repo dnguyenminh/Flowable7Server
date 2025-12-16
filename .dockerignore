@@ -1,4 +1,6 @@
 target/
+.dockerignore will ignore the entire target directory, but allow the built jar to be copied into the image
+!target/*.jar
 .gradle/
 .mvn/
 .git
