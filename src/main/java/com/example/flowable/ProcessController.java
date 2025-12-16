@@ -2,7 +2,7 @@ package com.example.flowable;
 
 import org.flowable.engine.RuntimeService;
 import org.flowable.task.api.Task;
-import org.flowable.task.service.TaskService;
+import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +46,7 @@ public class ProcessController {
     }
 
     @GetMapping("/tasks/{processInstanceId}")
-    public ResponseEntity<List<Map<String, String>>> tasks(@PathVariable String processInstanceId) {
+    public ResponseEntity<List<Map<String, String>>> tasks(@PathVariable("processInstanceId") String processInstanceId) {
         List<Map<String, String>> tasks = taskService.createTaskQuery().processInstanceId(processInstanceId).list()
                 .stream().map(t -> {
                     Map<String, String> m = new HashMap<>();
