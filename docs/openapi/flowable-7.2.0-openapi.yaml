@@ -1,0 +1,123 @@
+openapi: 3.0.1
+info:
+  title: Flowable REST (subset) - 7.2.0 (Generated)
+  version: 7.2.0
+  description: "A minimal OpenAPI spec covering the most-used BPMN/CMMN/DMN REST endpoints (subset generated for integration testing)."
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /process/start:
+    post:
+      summary: Start a process instance (test controller)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Process instance started
+
+  /process/tasks:
+    get:
+      summary: Query tasks by processInstanceId
+      parameters:
+        - in: query
+          name: processInstanceId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tasks list
+
+  /process/tasks/{id}/complete:
+    post:
+      summary: Complete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task completed
+
+  /process/instances/{id}/variables:
+    post:
+      summary: Set process instance variables
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Variables set
+
+  /process/message:
+    post:
+      summary: Correlate a message to a process execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                messageName:
+                  type: string
+                processInstanceId:
+                  type: string
+                variables:
+                  type: object
+      responses:
+        '200':
+          description: Message correlated
+
+  /decision/evaluate:
+    post:
+      summary: Evaluate a DMN decision (test controller)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                decisionKey:
+                  type: string
+                variables:
+                  type: object
+      responses:
+        '200':
+          description: Decision evaluation result
+
+  /case/start:
+    post:
+      summary: Start a CMMN case instance (test controller)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Case instance started
+
+components: {}
