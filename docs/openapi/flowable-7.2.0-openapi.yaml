@@ -15,13 +15,16 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                key:
-                  type: string
+              $ref: '#/components/schemas/ProcessStartRequest'
       responses:
         '200':
           description: Process instance started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessStartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /process/tasks:
     get:
@@ -34,6 +37,12 @@ paths:
       responses:
         '200':
           description: Tasks list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
 
   /process/tasks/{id}/complete:
     post:
@@ -47,6 +56,8 @@ paths:
       responses:
         '200':
           description: Task completed
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /process/instances/{id}/variables:
     post:
@@ -58,10 +69,11 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
+              $ref: '#/components/schemas/VariableMap'
       responses:
         '200':
           description: Variables set
@@ -74,17 +86,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                messageName:
-                  type: string
-                processInstanceId:
-                  type: string
-                variables:
-                  type: object
+              $ref: '#/components/schemas/MessageCorrelateRequest'
       responses:
         '200':
           description: Message correlated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /decision/evaluate:
     post:
@@ -94,15 +103,18 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                decisionKey:
-                  type: string
-                variables:
-                  type: object
+              $ref: '#/components/schemas/DecisionEvaluateRequest'
       responses:
         '200':
           description: Decision evaluation result
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DecisionResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
   /case/start:
     post:
@@ -112,12 +124,119 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                key:
-                  type: string
+              $ref: '#/components/schemas/CaseStartRequest'
       responses:
         '200':
           description: Case instance started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaseStartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
-components: {}
+components:
+  schemas:
+    ProcessStartRequest:
+      type: object
+      properties:
+        key:
+          type: string
+          example: simpleProcess
+
+    ProcessStartResponse:
+      type: object
+      properties:
+        processInstanceId:
+          type: string
+        processDefinitionKey:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    VariableMap:
+      type: object
+      additionalProperties: true
+      example:
+        approved: true
+        count: 5
+
+    MessageCorrelateRequest:
+      type: object
+      required: [messageName, processInstanceId]
+      properties:
+        messageName:
+          type: string
+        processInstanceId:
+          type: string
+        variables:
+          $ref: '#/components/schemas/VariableMap'
+
+    DecisionEvaluateRequest:
+      type: object
+      properties:
+        decisionKey:
+          type: string
+          example: isAdult
+        variables:
+          $ref: '#/components/schemas/VariableMap'
+
+    DecisionResult:
+      type: object
+      additionalProperties: true
+
+    CaseStartRequest:
+      type: object
+      properties:
+        key:
+          type: string
+          example: simpleCase
+
+    CaseStartResponse:
+      type: object
+      properties:
+        caseInstanceId:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
