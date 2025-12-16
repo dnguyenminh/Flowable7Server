@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: flowable
+      POSTGRES_PASSWORD: flowable
+      POSTGRES_DB: flowable
+    ports:
+      - "5432:5432"
+    volumes:
+      - flowable-pg-data:/var/lib/postgresql/data
+  flowable-app:
+    build: .
+    image: flowable7-server:local
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/flowable
+      SPRING_DATASOURCE_USERNAME: flowable
+      SPRING_DATASOURCE_PASSWORD: flowable
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  flowable-pg-data:

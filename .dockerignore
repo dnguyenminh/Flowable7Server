@@ -1,0 +1,8 @@
+target/
+.gradle/
+.mvn/
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+README-SETUP-FLOWABLE7.md
