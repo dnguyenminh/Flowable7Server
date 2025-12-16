@@ -10,6 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
+import javax.sql.DataSource;
+import org.flowable.cmmn.engine.CmmnEngine;
+import org.flowable.cmmn.engine.CmmnEngineConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +28,9 @@ public class CmmnRestIntegrationTest {
     @Autowired
     TestRestTemplate rest;
 
+    @Autowired
+    DataSource dataSource;
+
     @Test
     void startCaseViaRestAndListTasks() {
         HttpHeaders headers = new HttpHeaders();
@@ -37,5 +43,22 @@ public class CmmnRestIntegrationTest {
         Map<String, Object> result = resp.getBody();
         assertThat(result).containsKey("caseInstanceId");
         assertThat(result).containsKey("tasks");
+
+        // complete the returned task via the generic task completion REST endpoint and assert milestone occurs
+        var tasks = (java.util.List<Map<String, Object>>) result.get("tasks");
+        if (!tasks.isEmpty()) {
+            String taskId = (String) tasks.get(0).get("id");
+            rest.postForEntity("/process/tasks/" + taskId + "/complete", null, Void.class);
+
+            // build a small CMMN engine to query historic milestones
+            CmmnEngineConfiguration cfg = CmmnEngineConfiguration.createStandaloneInMemCmmnEngineConfiguration();
+            cfg.setDataSource(dataSource);
+            cfg.setDisableCmmnXmlValidation(true);
+            CmmnEngine engine = cfg.buildCmmnEngine();
+
+            var list = engine.getCmmnHistoryService().createHistoricMilestoneInstanceQuery().list();
+            boolean found = list.stream().anyMatch(m -> ((String) result.get("caseInstanceId")).equals(m.getCaseInstanceId()));
+            assertThat(found).isTrue();
+        }
     }
 }
