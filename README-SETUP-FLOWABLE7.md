@@ -8,8 +8,8 @@ This document explains how to set up and run a Flowable **version 7** server fro
 ---
 
 ## 🧰 Prerequisites
-- **Java JDK 17+** (LTS recommended — 17 or 21)
-- **Apache Maven 3.6+** (for building from source)
+- **Java JDK 21** (LTS recommended). Java 17 is still compatible for many flows, but this repository is compiled for **Java 21**.
+- **Apache Maven 3.6+** (3.8/3.9 recommended for best compatibility; this project was built with Maven 3.9.x)
 - **Git** (if cloning source)
 - **Docker & Docker Compose** (optional — for running DB or containerized app)
 - A supported relational database (PostgreSQL or MySQL recommended)
@@ -97,7 +97,7 @@ Check logs for successful startup and that the application has connected to the 
 Simple `Dockerfile` example (build the JAR with Maven first):
 
 ```dockerfile
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 COPY target/*.jar /app/app.jar
 EXPOSE 8080
@@ -190,6 +190,10 @@ The repository now includes example files you can use as a starting point:
 - `Dockerfile` — basic image that expects a built JAR at `target/*.jar` and exposes port `8080`.
 - `docker-compose.yml` — brings up a `postgres:14` database and builds/runs the `flowable-app` image.
 - `src/main/resources/application.yml` — sample Spring Boot configuration for Postgres and Actuator.
+ - `src/test/resources/processes/simple-process.bpmn20.xml` — sample BPMN used by the H2-based integration tests (moved from main resources to test resources).
+ - `src/main/resources/application.yml` — sample Spring Boot configuration for Postgres and Actuator.
+
+Note: This repository currently uses **Spring Boot 3.2.12** and **Flowable 7.2.0**.
 - `.dockerignore` — ignores `target/` and other files from Docker builds.
 
 Quick usage:
