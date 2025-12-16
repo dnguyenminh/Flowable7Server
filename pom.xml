@@ -77,23 +77,7 @@
           <release>${java.version}</release>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.47.3</version>
-                <configuration>
-                    <activeRecipes>
-                        <recipe>org.openrewrite.java.migrate.UpgradeToJava21</recipe>
-                    </activeRecipes>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openrewrite.recipe</groupId>
-                        <artifactId>rewrite-migrate-java</artifactId>
-                        <version>2.31.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+            <!-- OpenRewrite plugin removed after applying recipe -->
         </plugins>
     </build>
 </project>
