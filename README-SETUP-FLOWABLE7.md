@@ -193,6 +193,18 @@ The repository now includes example files you can use as a starting point:
  - `src/test/resources/processes/simple-process.bpmn20.xml` — sample BPMN used by the H2-based integration tests (moved from main resources to test resources).
  - `src/main/resources/application.yml` — sample Spring Boot configuration for Postgres and Actuator.
 
+### OpenAPI-based test generator 🔧
+
+- This repository includes a small Java utility that generates basic integration test scaffolding from the OpenAPI subset in `docs/openapi/`.
+- It runs automatically during the Maven `generate-test-sources` phase and writes `src/test/java/com/example/flowable/GeneratedOpenApiIntegrationTest.java`.
+- To regenerate tests locally run:
+
+```bash
+mvn generate-test-sources
+```
+
+The generator is implemented in `com.example.flowable.tools.OpenApiToTestsGenerator` and uses SnakeYAML to parse the minimal OpenAPI YAML.
+
 Note: This repository currently uses **Spring Boot 3.2.12** and **Flowable 7.2.0**.
 - `.dockerignore` — ignores `target/` and other files from Docker builds.
 
