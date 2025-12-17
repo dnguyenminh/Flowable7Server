@@ -9,26 +9,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        java-version: [17, 21]
+    # Run the build only on Java 21
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK ${{ matrix.java-version }}
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ matrix.java-version }}
+          java-version: '21'
 
       - name: Cache Maven local repository
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ matrix.java-version }}-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-m2-21-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-m2-
 
@@ -39,7 +36,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: surefire-reports-${{ matrix.java-version }}
+          name: surefire-reports-21
           path: target/surefire-reports
 
   # Additional lightweight job: verify that project compiles (faster, runs once)
@@ -57,3 +54,35 @@ jobs:
 
       - name: Verify compile (skip tests)
         run: mvn -B -DskipTests=true -q package
+
+  # Fails the PR when generated test sources are out-of-date
+  check-generated-tests:
+    name: Check generated tests
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Maven local repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-21-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Run generate-test-sources
+        run: mvn -B -DskipTests -q generate-test-sources
+
+      - name: Fail if generated sources changed
+        run: |
+          git --no-pager diff --exit-code || (echo 'Generated sources are out-of-date. Run `mvn generate-test-sources` and commit the changes.' && git --no-pager status --porcelain && exit 1)
