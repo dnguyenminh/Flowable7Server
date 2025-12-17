@@ -83,6 +83,7 @@ jobs:
       - name: Run generate-test-sources
         run: mvn -B -DskipTests -q generate-test-sources
 
-      - name: Fail if generated sources changed
+      - name: Fail if generated test sources changed
         run: |
-          git --no-pager diff --exit-code || (echo 'Generated sources are out-of-date. Run `mvn generate-test-sources` and commit the changes.' && git --no-pager status --porcelain && exit 1)
+          # Only fail if committed test sources changed (ignore build artifacts under target/)
+          git --no-pager diff --exit-code -- src/test/java || (echo 'Generated test sources are out-of-date. Run `mvn generate-test-sources` and commit the changes to src/test/java.' && git --no-pager status --porcelain -- src/test/java && exit 1)
