@@ -34,7 +34,10 @@ jobs:
 
   # Gradle build using the wrapper (verifies Gradle support and generator task)
   gradle-build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -57,8 +60,12 @@ jobs:
 
       - name: Run Gradle build (wrapper)
         run: |
-          chmod +x ./gradlew || true
-          ./gradlew build --warning-mode all
+          if [ "${{ matrix.os }}" == 'windows-latest' ]; then
+            powershell -Command "& .\gradlew.bat build --warning-mode all"
+          else
+            chmod +x ./gradlew || true
+            ./gradlew build --warning-mode all
+          fi
 
       - name: Upload Gradle test results
         if: always()
