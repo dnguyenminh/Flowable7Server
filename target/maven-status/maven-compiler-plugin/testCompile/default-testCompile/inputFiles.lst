@@ -1,2 +1,4 @@
-/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/ProcessControllerIntegrationTest.java
-/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/ProcessTestController.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedCaseIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedDecisionIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedOpenApiIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedProcessIntegrationTest.java
