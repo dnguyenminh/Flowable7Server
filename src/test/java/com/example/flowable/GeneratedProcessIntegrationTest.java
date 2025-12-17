@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +45,11 @@ public class GeneratedProcessIntegrationTest {
         ResponseEntity<String> resp = rest.getForEntity("/process/tasks?processInstanceId=dummy-process", String.class);
         // allow 2xx or 4xx client responses from endpoints when no data is present
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();
+        if (resp.getStatusCode().is2xxSuccessful()) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<?> list = mapper.readValue(resp.getBody(), List.class);
+            assertThat(list).isInstanceOf(List.class);
+        }
     }
 
     @Test

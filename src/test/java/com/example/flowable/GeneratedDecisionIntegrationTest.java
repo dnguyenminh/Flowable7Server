@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +41,11 @@ public class GeneratedDecisionIntegrationTest {
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
         ResponseEntity<String> resp = rest.postForEntity("/decision/evaluate", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
+        if (resp.getStatusCode().is2xxSuccessful()) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<?> list = mapper.readValue(resp.getBody(), List.class);
+            assertThat(list).isNotNull();
+        }
     }
 
     @Test
