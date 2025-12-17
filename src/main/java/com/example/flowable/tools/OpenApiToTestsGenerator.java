@@ -64,6 +64,8 @@ public class OpenApiToTestsGenerator {
             sb.append("import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;\n");
             sb.append("import org.springframework.boot.autoconfigure.EnableAutoConfiguration;\n");
             sb.append("import org.springframework.http.*;\n");
+            sb.append("import com.fasterxml.jackson.databind.ObjectMapper;\n");
+            sb.append("import java.util.List;\n");
             sb.append("import java.util.Map;\n");
             sb.append("import java.util.HashMap;\n");
             sb.append("import static org.assertj.core.api.Assertions.assertThat;\n\n");
@@ -128,6 +130,11 @@ public class OpenApiToTestsGenerator {
 
                         if (path.contains("decision")) {
                             sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();\n");
+                            sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
+                            sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
+                            sb.append("            List<?> list = mapper.readValue(resp.getBody(), List.class);\n");
+                            sb.append("            assertThat(list).isNotNull();\n");
+                            sb.append("        }\n");
                             // also add a negative (no vars) variant as a separate test
                             sb.append("    }\n\n");
                             sb.append("    @Test\n");
@@ -147,6 +154,19 @@ public class OpenApiToTestsGenerator {
                                 // endpoints referencing ids may legitimately return 4xx when using dummies; accept 2xx or 4xx
                                 if (path.contains("instances") || path.contains("message") || path.contains("tasks") || path.contains("{")) {
                                     sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();\n");
+                                    if (path.contains("/process/start")) {
+                                        sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
+                                        sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
+                                        sb.append("            java.util.Map<?,?> map = mapper.readValue(resp.getBody(), java.util.Map.class);\n");
+                                        sb.append("            assertThat(map.containsKey(\"processInstanceId\") || map.containsKey(\"processDefinitionKey\")).isTrue();\n");
+                                        sb.append("        }\n");
+                                    } else if (path.contains("/case/start")) {
+                                        sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
+                                        sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
+                                        sb.append("            java.util.Map<?,?> map = mapper.readValue(resp.getBody(), java.util.Map.class);\n");
+                                        sb.append("            assertThat(map.containsKey(\"caseInstanceId\")).isTrue();\n");
+                                        sb.append("        }\n");
+                                    }
                                 } else {
                                     sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();\n");
                                 }
@@ -172,6 +192,11 @@ public class OpenApiToTestsGenerator {
                             sb.append("        ResponseEntity<String> resp = rest.getForEntity(\"").append(url).append("\", String.class);\n");
                             sb.append("        // allow 2xx or 4xx client responses from endpoints when no data is present\n");
                             sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();\n");
+                            sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
+                            sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
+                            sb.append("            List<?> list = mapper.readValue(resp.getBody(), List.class);\n");
+                            sb.append("            assertThat(list).isInstanceOf(List.class);\n");
+                            sb.append("        }\n");
                         } else {
                             // Some POST endpoints do not declare a requestBody in this minimal spec but
                             // still accept an empty JSON body (e.g., POST /process/tasks/{id}/complete).
