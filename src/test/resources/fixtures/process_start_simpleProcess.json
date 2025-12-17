@@ -1,0 +1,5 @@
+{
+  "processInstanceId": "__ANY_NON_EMPTY__",
+  "processDefinitionKey": "simpleProcess",
+  "tasks": []
+}

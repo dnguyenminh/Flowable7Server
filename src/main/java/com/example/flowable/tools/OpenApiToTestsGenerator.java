@@ -134,6 +134,12 @@ public class OpenApiToTestsGenerator {
                             sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
                             sb.append("            List<?> list = mapper.readValue(resp.getBody(), List.class);\n");
                             sb.append("            assertThat(list).isNotNull();\n");
+                            // If we ship a fixture, assert the response equals the fixture
+                            sb.append("            java.io.InputStream fixture = getClass().getResourceAsStream(\"/fixtures/decision_evaluate_isAdult_20.json\");\n");
+                            sb.append("            if (fixture != null) {\n");
+                            sb.append("                Object expected = mapper.readValue(fixture, Object.class);\n");
+                            sb.append("                assertThat(list).isEqualTo(expected);\n");
+                            sb.append("            }\n");
                             sb.append("        }\n");
                             // also add a negative (no vars) variant as a separate test
                             sb.append("    }\n\n");
@@ -159,12 +165,40 @@ public class OpenApiToTestsGenerator {
                                         sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
                                         sb.append("            java.util.Map<?,?> map = mapper.readValue(resp.getBody(), java.util.Map.class);\n");
                                         sb.append("            assertThat(map.containsKey(\"processInstanceId\") || map.containsKey(\"processDefinitionKey\")).isTrue();\n");
+                                        sb.append("            java.io.InputStream fixture = getClass().getResourceAsStream(\"/fixtures/process_start_simpleProcess.json\");\n");
+                                        sb.append("            if (fixture != null) {\n");
+                                        sb.append("                java.util.Map<?,?> expected = mapper.readValue(fixture, java.util.Map.class);\n");
+                                        sb.append("                for (java.util.Map.Entry<?,?> e : expected.entrySet()) {\n");
+                                        sb.append("                    String k = (String) e.getKey();\n");
+                                        sb.append("                    Object v = e.getValue();\n");
+                                        sb.append("                    if (\"__ANY_NON_EMPTY__\".equals(v)) {\n");
+                                        sb.append("                        assertThat(map.get(k)).isNotNull();\n");
+                                        sb.append("                        assertThat(map.get(k).toString().length() > 0).isTrue();\n");
+                                        sb.append("                    } else {\n");
+                                        sb.append("                        assertThat(map.get(k)).isEqualTo(v);\n");
+                                        sb.append("                    }\n");
+                                        sb.append("                }\n");
+                                        sb.append("            }\n");
                                         sb.append("        }\n");
                                     } else if (path.contains("/case/start")) {
                                         sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
                                         sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
                                         sb.append("            java.util.Map<?,?> map = mapper.readValue(resp.getBody(), java.util.Map.class);\n");
                                         sb.append("            assertThat(map.containsKey(\"caseInstanceId\")).isTrue();\n");
+                                        sb.append("            java.io.InputStream fixture = getClass().getResourceAsStream(\"/fixtures/case_start_simpleCase.json\");\n");
+                                        sb.append("            if (fixture != null) {\n");
+                                        sb.append("                java.util.Map<?,?> expected = mapper.readValue(fixture, java.util.Map.class);\n");
+                                        sb.append("                for (java.util.Map.Entry<?,?> e : expected.entrySet()) {\n");
+                                        sb.append("                    String k = (String) e.getKey();\n");
+                                        sb.append("                    Object v = e.getValue();\n");
+                                        sb.append("                    if (\"__ANY_NON_EMPTY__\".equals(v)) {\n");
+                                        sb.append("                        assertThat(map.get(k)).isNotNull();\n");
+                                        sb.append("                        assertThat(map.get(k).toString().length() > 0).isTrue();\n");
+                                        sb.append("                    } else {\n");
+                                        sb.append("                        assertThat(map.get(k)).isEqualTo(v);\n");
+                                        sb.append("                    }\n");
+                                        sb.append("                }\n");
+                                        sb.append("            }\n");
                                         sb.append("        }\n");
                                     }
                                 } else {

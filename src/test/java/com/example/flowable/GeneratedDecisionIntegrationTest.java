@@ -45,6 +45,11 @@ public class GeneratedDecisionIntegrationTest {
             ObjectMapper mapper = new ObjectMapper();
             List<?> list = mapper.readValue(resp.getBody(), List.class);
             assertThat(list).isNotNull();
+            java.io.InputStream fixture = getClass().getResourceAsStream("/fixtures/decision_evaluate_isAdult_20.json");
+            if (fixture != null) {
+                Object expected = mapper.readValue(fixture, Object.class);
+                assertThat(list).isEqualTo(expected);
+            }
         }
     }
 
