@@ -32,6 +32,40 @@ jobs:
       - name: Build and test
         run: mvn -B -V -DskipTests=false test
 
+  # Gradle build using the wrapper (verifies Gradle support and generator task)
+  gradle-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties','**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Run Gradle build (wrapper)
+        run: |
+          chmod +x ./gradlew || true
+          ./gradlew build --warning-mode all
+
+      - name: Upload Gradle test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-test-results
+          path: build/test-results
       - name: Upload test result (if any)
         if: always()
         uses: actions/upload-artifact@v4
@@ -82,8 +116,12 @@ jobs:
 
       - name: Run generate-test-sources
         run: mvn -B -DskipTests -q generate-test-sources
+      - name: Run Gradle generator (also)
+        run: |
+          chmod +x ./gradlew || true
+          ./gradlew -q generateOpenApiTests
 
       - name: Fail if generated test sources changed
         run: |
-          # Only fail if committed test sources changed (ignore build artifacts under target/)
-          git --no-pager diff --exit-code -- src/test/java || (echo 'Generated test sources are out-of-date. Run `mvn generate-test-sources` and commit the changes to src/test/java.' && git --no-pager status --porcelain -- src/test/java && exit 1)
+          # Only fail if committed test sources changed (ignore build artifacts under target/ or build/)
+          git --no-pager diff --exit-code -- src/test/java || (echo 'Generated test sources are out-of-date. Run `mvn generate-test-sources` or `./gradlew generateOpenApiTests` and commit the changes to src/test/java.' && git --no-pager status --porcelain -- src/test/java && exit 1)
