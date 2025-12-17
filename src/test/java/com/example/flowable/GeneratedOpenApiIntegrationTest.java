@@ -23,9 +23,8 @@ public class GeneratedOpenApiIntegrationTest {
     @Autowired
     TestRestTemplate rest;
 
-
     @Test
-    public void test_post_process_start() throws Exception {
+    public void test_post__process_start() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
@@ -36,18 +35,18 @@ public class GeneratedOpenApiIntegrationTest {
     }
 
     @Test
-    public void test_get_process_tasks() throws Exception {
+    public void test_get__process_tasks() throws Exception {
         ResponseEntity<String> resp = rest.getForEntity("/process/tasks?processInstanceId=dummy-process", String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful()).isTrue();
     }
 
     @Test
-    public void test_post_process_tasks_id_complete() throws Exception {
+    public void test_post__process_tasks__id__complete() throws Exception {
         // request body not provided in spec; skipping
     }
 
     @Test
-    public void test_post_process_instances_id_variables() throws Exception {
+    public void test_post__process_instances__id__variables() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
@@ -58,7 +57,7 @@ public class GeneratedOpenApiIntegrationTest {
     }
 
     @Test
-    public void test_post_process_message() throws Exception {
+    public void test_post__process_message() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
@@ -70,18 +69,7 @@ public class GeneratedOpenApiIntegrationTest {
     }
 
     @Test
-    public void test_post_decision_evaluate_no_vars() throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String,Object> body = new HashMap<>();
-        body.put("decisionKey", "isAdult");
-        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/decision/evaluate", entity, String.class);
-        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
-    }
-
-    @Test
-    public void test_post_decision_evaluate() throws Exception {
+    public void test_post__decision_evaluate() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
@@ -95,7 +83,18 @@ public class GeneratedOpenApiIntegrationTest {
     }
 
     @Test
-    public void test_post_case_start() throws Exception {
+    public void test_post__decision_evaluate_no_vars() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        Map<String,Object> body = new HashMap<>();
+        body.put("decisionKey", "isAdult");
+        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
+        ResponseEntity<String> resp = rest.postForEntity("/decision/evaluate", entity, String.class);
+        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
+    }
+
+    @Test
+    public void test_post__case_start() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
@@ -104,4 +103,5 @@ public class GeneratedOpenApiIntegrationTest {
         ResponseEntity<String> resp = rest.postForEntity("/case/start", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful()).isTrue();
     }
+
 }
