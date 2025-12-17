@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="Examples">
+  <message id="ContinueMessage" name="ContinueMessage" />
+
+  <process id="messageProcess" name="Message Process" isExecutable="true">
+    <startEvent id="startEvent" />
+    <sequenceFlow id="mflow1" sourceRef="startEvent" targetRef="taskBefore" />
+
+    <userTask id="taskBefore" name="Before Message" />
+    <sequenceFlow id="mflow2" sourceRef="taskBefore" targetRef="catchMessage" />
+
+    <intermediateCatchEvent id="catchMessage">
+      <messageEventDefinition messageRef="ContinueMessage" />
+    </intermediateCatchEvent>
+
+    <sequenceFlow id="mflow3" sourceRef="catchMessage" targetRef="taskAfter" />
+    <userTask id="taskAfter" name="After Message" />
+    <sequenceFlow id="mflow4" sourceRef="taskAfter" targetRef="endEvent" />
+    <endEvent id="endEvent" />
+  </process>
+</definitions>

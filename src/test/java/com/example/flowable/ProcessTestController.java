@@ -56,4 +56,41 @@ public class ProcessTestController {
                 }).collect(Collectors.toList());
         return ResponseEntity.ok(tasks);
     }
+
+    @PostMapping("/tasks/{id}/complete")
+    public ResponseEntity<Void> completeTask(@PathVariable("id") String id) {
+        taskService.complete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/instances/{id}/variables")
+    public ResponseEntity<Void> setVariables(@PathVariable("id") String processInstanceId, @RequestBody Map<String, Object> vars) {
+        runtimeService.setVariables(processInstanceId, vars);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/instances/{id}/variables")
+    public ResponseEntity<Map<String, Object>> getVariables(@PathVariable("id") String processInstanceId) {
+        Map<String, Object> vars = runtimeService.getVariables(processInstanceId);
+        return ResponseEntity.ok(vars);
+    }
+
+    @PostMapping("/message")
+    public ResponseEntity<Void> correlateMessage(@RequestBody Map<String, Object> body) {
+        String messageName = (String) body.get("messageName");
+        String processInstanceId = (String) body.get("processInstanceId");
+        Map<String, Object> vars = (Map<String, Object>) body.getOrDefault("variables", Map.of());
+
+        if (messageName == null || processInstanceId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        var exec = runtimeService.createExecutionQuery().processInstanceId(processInstanceId).messageEventSubscriptionName(messageName).singleResult();
+        if (exec == null) {
+            return ResponseEntity.notFound().build();
+        }
+        // correlate by execution id and pass variables
+        runtimeService.messageEventReceived(messageName, exec.getId(), vars);
+        return ResponseEntity.ok().build();
+    }
 }

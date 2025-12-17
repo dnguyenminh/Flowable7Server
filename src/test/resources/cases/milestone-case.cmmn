@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" 
+                  xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" 
+                  xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" 
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI"
+                  id="definitions" 
+                  targetNamespace="http://bpmn.io/schema/cmmn">
+
+  <cmmn:case id="milestoneCase" name="Milestone Case">
+    <cmmn:casePlanModel id="planModel" name="Milestone Case">
+      
+      <cmmn:planItem id="planItem1" definitionRef="humanTask1" />
+      <cmmn:planItem id="planItem2" definitionRef="milestone1">
+        <cmmn:entryCriterion id="entry1" sentryRef="sentry1" />
+      </cmmn:planItem>
+
+      <cmmn:sentry id="sentry1">
+        <cmmn:planItemOnPart id="onPart1" sourceRef="planItem1">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+
+      <cmmn:humanTask id="humanTask1" name="Approve Task" />
+      <cmmn:milestone id="milestone1" name="Approved Milestone" />
+      
+    </cmmn:casePlanModel>
+  </cmmn:case>
+
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_1">
+      <cmmndi:Size width="500" height="500" />
+      
+      <cmmndi:CMMNShape id="DI_CasePlanModel" cmmnElementRef="planModel">
+        <dc:Bounds x="150" y="80" width="500" height="300" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_PlanItem_1" cmmnElementRef="planItem1">
+        <dc:Bounds x="200" y="150" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_PlanItem_2" cmmnElementRef="planItem2">
+        <dc:Bounds x="450" y="170" width="100" height="40" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_EntryCriterion_1" cmmnElementRef="entry1">
+        <dc:Bounds x="440" y="175" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNEdge id="DI_OnPart_1" 
+                       cmmnElementRef="onPart1" 
+                       sourceCMMNElementRef="planItem1" 
+                       targetCMMNElementRef="entry1">
+        <di:waypoint x="300" y="190" />
+        <di:waypoint x="440" y="190" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNEdge>
+
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

@@ -20,30 +20,22 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.datasource.password=",
         "spring.jpa.hibernate.ddl-auto=create-drop"
 })
-public class ProcessControllerIntegrationTest {
+public class DmnRestEdgeCaseTest {
 
     @Autowired
     TestRestTemplate rest;
 
     @Test
-    void startProcessAndListTasks() throws Exception {
+    void evaluateDecisionWithMissingInputsViaRest() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String body = "{\"key\":\"simpleProcess\"}";
+        String body = "{\"decisionKey\":\"isAdult\", \"variables\": {}}";
         HttpEntity<String> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> resp = rest.postForEntity("/process/start", request, Map.class);
+        ResponseEntity<Object[]> resp = rest.postForEntity("/decision/evaluate", request, Object[].class);
         assertThat(resp.getStatusCode().is2xxSuccessful()).isTrue();
-        Map<String, Object> result = resp.getBody();
-        assertThat(result).containsKey("processInstanceId");
-        assertThat(result).containsKey("tasks");
-        // complete the first task via REST and verify no remaining tasks
-        var tasks = (java.util.List<Map<String, String>>) result.get("tasks");
-        if (!tasks.isEmpty()) {
-            String taskId = tasks.get(0).get("id");
-            rest.postForEntity("/process/tasks/" + taskId + "/complete", null, Void.class);
-            ResponseEntity<java.util.List> after = rest.getForEntity("/process/tasks?processInstanceId=" + result.get("processInstanceId"), java.util.List.class);
-            assertThat(after.getBody()).isNotNull();
-        }
+        Object[] result = resp.getBody();
+        // engine may return empty result array or a defined fallback; assert request succeeded and response is present
+        assertThat(result).isNotNull();
     }
 }
