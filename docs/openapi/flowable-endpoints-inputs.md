@@ -17,6 +17,8 @@ This document summarizes **required** vs **optional** inputs for each endpoint i
 | `/decision/evaluate` | POST | Request body (required) — schema `DecisionEvaluateRequest` (the schema does not declare required properties) | `decisionKey` (string) and `variables` are accepted in the body per schema | The spec marks the request body required; the schema does not list `decisionKey` as required (but tests expect a `decisionKey`). Generated tests POST to DMN REST execute endpoint. |
 | `/case/start` | POST | None (request body **optional**) | Request body (if provided): `key` (string) — schema `CaseStartRequest` | `requestBody.required: false`. Tests call `/cmmn-runtime/case-instances` in Flowable REST. |
 
+| `/repository/deployments` | POST | Request body (multipart/form-data) containing `files` (one or more files) | `deploymentName` (string, optional) | Used to deploy BPMN/CMMN/DMN files. Form must include at least one file field (e.g., `-F "files=@my.bpmn"`). |
+
 ---
 
 ## Schema notes
@@ -159,5 +161,17 @@ curl -s -X POST 'http://localhost:8080/cmmn-runtime/case-instances' \
 	-H 'Content-Type: application/json' \
 	-d '{"caseDefinitionKey":"simpleCase"}'
 ```
+
+- /repository/deployments (Flowable REST: POST /repository/deployments)
+
+```bash
+curl -s -X POST 'http://localhost:8080/repository/deployments' \
+	-H 'Content-Type: multipart/form-data' \
+	-F 'files=@examples/resources/simpleProcess.bpmn' \
+	-F 'files=@examples/resources/simpleCase.cmmn' \
+	-F 'deploymentName=example-deployment'
+```
+
+Note: Form uploads must use multipart/form-data; provide at least one `files` field.
 
 ++ End File: /home/ducnm/projects/java/Flowable7Server/docs/openapi/flowable-endpoints-inputs.md

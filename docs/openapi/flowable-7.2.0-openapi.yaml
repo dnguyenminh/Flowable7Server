@@ -135,6 +135,57 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  /repository/deployments:
+    post:
+      summary: Create a deployment (upload BPMN/CMMN/DMN resources)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                deploymentName:
+                  type: string
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required: [ files ]
+            encoding:
+              files:
+                contentType: application/octet-stream
+      responses:
+        '201':
+          description: Deployment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /repository/deployments/{id}:
+    get:
+      summary: Get deployment metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deployment metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
 components:
   schemas:
     ProcessStartRequest:
@@ -211,6 +262,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Task'
+
+    DeploymentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        deploymentTime:
+          type: string
+          format: date-time
 
   responses:
     BadRequest:
