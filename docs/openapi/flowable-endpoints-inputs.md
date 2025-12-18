@@ -101,4 +101,63 @@ GET /runtime/tasks?processInstanceId=dummy-process
 
 Note: the generator used `key` in the minimal spec's `CaseStartRequest`; Flowable CMMN REST commonly accepts `caseDefinitionKey` / `caseDefinitionId`.
 
+---
+
+## Curl examples
+Below are example curl commands for each endpoint. Replace `localhost:8080` or resource ids (`{id}`, `{taskId}`, `{executionId}`) with values appropriate for your environment.
+
+- Start a process instance (Flowable REST: POST /runtime/process-instances)
+
+```bash
+curl -s -X POST 'http://localhost:8080/runtime/process-instances' \
+	-H 'Content-Type: application/json' \
+	-d '{"processDefinitionKey":"simpleProcess","variables":[{"name":"approved","value":true}]}'
+```
+
+- Query tasks (Flowable REST: GET /runtime/tasks)
+
+```bash
+curl -s "http://localhost:8080/runtime/tasks?processInstanceId=dummy-process"
+```
+
+- Complete a task (Flowable REST: POST /runtime/tasks/{taskId})
+
+```bash
+curl -s -X POST "http://localhost:8080/runtime/tasks/{taskId}" \
+	-H 'Content-Type: application/json' \
+	-d '{"action":"complete","variables":[{"name":"approved","value":true}]}'
+```
+
+- Set process instance variables (Flowable REST: POST /runtime/process-instances/{id}/variables)
+
+```bash
+curl -s -X POST "http://localhost:8080/runtime/process-instances/{id}/variables" \
+	-H 'Content-Type: application/json' \
+	-d '[{"name":"approved","value":true},{"name":"count","value":5}]'
+```
+
+- Correlate a message (Flowable REST: POST /runtime/executions/{executionId}/message)
+
+```bash
+curl -s -X POST "http://localhost:8080/runtime/executions/{executionId}/message" \
+	-H 'Content-Type: application/json' \
+	-d '{"messageName":"Ping","processInstanceId":"0000-1111-2222","variables":{"approved":true}}'
+```
+
+- Evaluate a decision (Flowable DMN REST: POST /dmn-rule/execute-decision-service)
+
+```bash
+curl -s -X POST 'http://localhost:8080/dmn-rule/execute-decision-service' \
+	-H 'Content-Type: application/json' \
+	-d '{"decisionKey":"isAdult","variables":{"age":20}}'
+```
+
+- Start a case (Flowable CMMN REST: POST /cmmn-runtime/case-instances)
+
+```bash
+curl -s -X POST 'http://localhost:8080/cmmn-runtime/case-instances' \
+	-H 'Content-Type: application/json' \
+	-d '{"caseDefinitionKey":"simpleCase"}'
+```
+
 ++ End File: /home/ducnm/projects/java/Flowable7Server/docs/openapi/flowable-endpoints-inputs.md
