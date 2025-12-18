@@ -32,4 +32,73 @@ If you want, I can also:
 
 _Generated on: December 18, 2025_
 
+---
+
+## Example request bodies and usage
+Below are example request payloads (JSON) and short usage notes for each endpoint. These are aligned with the generator and tests which call Flowable REST endpoints (where applicable).
+
+- /process/start (mapped to Flowable REST `POST /runtime/process-instances`)
+
+```json
+{
+	"processDefinitionKey": "simpleProcess",
+	"variables": [
+		{ "name": "approved", "value": true },
+		{ "name": "count", "value": 5 }
+	]
+}
+```
+
+Note: the original test-spec used `key` in `ProcessStartRequest`; Flowable REST expects `processDefinitionKey` and an array of variable objects.
+
+- GET /process/tasks example (query)
+
+```
+GET /runtime/tasks?processInstanceId=dummy-process
+```
+
+- /process/tasks/{id}/complete (mapped to `POST /runtime/tasks/{taskId}` with action complete)
+
+```json
+{
+	"action": "complete",
+	"variables": [ { "name": "approved", "value": true } ]
+}
+```
+
+- /process/instances/{id}/variables (mapped to `POST /runtime/process-instances/{id}/variables`)
+
+```json
+[ { "name": "approved", "value": true }, { "name": "count", "value": 5 } ]
+```
+
+- /process/message (mapped to `POST /runtime/executions/{executionId}/message`)
+
+```json
+{
+	"messageName": "Ping",
+	"processInstanceId": "0000-1111-2222",
+	"variables": { "approved": true }
+}
+```
+
+- /decision/evaluate (mapped to `POST /dmn-rule/execute-decision-service`)
+
+```json
+{
+	"decisionKey": "isAdult",
+	"variables": { "age": 20 }
+}
+```
+
+- /case/start (mapped to `POST /cmmn-runtime/case-instances`)
+
+```json
+{
+	"caseDefinitionKey": "simpleCase"
+}
+```
+
+Note: the generator used `key` in the minimal spec's `CaseStartRequest`; Flowable CMMN REST commonly accepts `caseDefinitionKey` / `caseDefinitionId`.
+
 ++ End File: /home/ducnm/projects/java/Flowable7Server/docs/openapi/flowable-endpoints-inputs.md
