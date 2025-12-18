@@ -30,3 +30,5 @@
  - correlate_message.sh — correlate a message (by execution id)
  - evaluate_decision.sh — execute a DMN decision
  - start_case.sh — start a CMMN case instance
+- deploy_examples.sh — upload example BPMN/CMMN files and verify deployment
+
