@@ -1,0 +1,61 @@
+name: Smoke tests (examples)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  examples-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build (package)
+        run: mvn -DskipTests package -B
+
+      - name: Start application
+        run: |
+          nohup java -jar target/flowable7-server-0.1.0-SNAPSHOT.jar > app.log 2>&1 &
+          echo $! > app.pid
+
+      - name: Wait for web server (actuator/health)
+        run: |
+          set -e
+          for i in $(seq 1 60); do
+            if curl -sSf http://localhost:8080/actuator/health >/dev/null 2>&1; then
+              echo "Server is up"; sleep 1; exit 0
+            fi
+            echo "Waiting for server... ($i)"; sleep 1
+          done
+          echo "Server did not become available; dumping logs:"; cat app.log; exit 1
+
+      - name: Run example scripts (smoke tests)
+        run: |
+          chmod +x examples/*.sh
+          export BASE_URL=http://localhost:8080
+          ./examples/start_process.sh
+          ./examples/query_tasks.sh dummy-process
+          ./examples/complete_task.sh dummy-id
+          ./examples/set_variables.sh dummy-id
+          ./examples/correlate_message.sh dummy-id
+          ./examples/evaluate_decision.sh
+          ./examples/start_case.sh
+
+      - name: Collect logs
+        if: failure()
+        run: |
+          echo "--- app.log ---"; tail -n +1 app.log || true
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then kill "$(cat app.pid)" || true; fi
