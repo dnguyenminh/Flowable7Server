@@ -20601,7 +20601,7 @@ definitions:
         example: '5'
       caseInstanceUrl:
         type: string
-        example: http://localhost:8182/cmmn-runtime/case-instances/5
+        example: http://localhost:8182/cmmn-apicase-instances/5
       caseDefinitionId:
         type: string
         example: timerCase:1:4
@@ -21026,7 +21026,7 @@ definitions:
         example: '5'
       url:
         type: string
-        example: http://localhost:8182/cmmn-runtime/plan-item-instances/5
+        example: http://localhost:8182/cmmn-apiplan-item-instances/5
       name:
         type: string
       caseInstanceId:
@@ -21870,7 +21870,7 @@ definitions:
         example: '8'
       url:
         type: string
-        example: http://localhost:8182/cmmn-runtime/tasks/8
+        example: http://localhost:8182/cmmn-apitasks/8
       owner:
         type: string
         example: owner
@@ -21935,13 +21935,13 @@ definitions:
         example: '5'
       caseInstanceUrl:
         type: string
-        example: http://localhost:8182/cmmn-runtime/case-instances/5
+        example: http://localhost:8182/cmmn-apicase-instances/5
       caseDefinitionId:
         type: string
         example: oneTaskCase%3A1%3A4
       caseDefinitionUrl:
         type: string
-        example: http://localhost:8182/cmmn-runtime/case-definitions/oneTaskCase%3A1%3A4
+        example: http://localhost:8182/cmmn-apicase-definitions/oneTaskCase%3A1%3A4
       parentTaskId:
         type: string
         example: 'null'

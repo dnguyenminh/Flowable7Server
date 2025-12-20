@@ -15,7 +15,7 @@ This document summarizes **required** vs **optional** inputs for each endpoint i
 | `/process/instances/{id}/variables` | POST | Path: `id` (required); Request body (required) — schema `VariableMap` | Variable names/values inside request body are free-form (additionalProperties) | `requestBody.required: true` in spec; body is a map of variables (no per-variable required keys). |
 | `/process/message` | POST | Request body (required): `messageName` (required), `processInstanceId` (required) — schema `MessageCorrelateRequest` | `variables` (VariableMap) | Both `messageName` and `processInstanceId` are listed in schema `required: [messageName, processInstanceId]`. |
 | `/decision/evaluate` | POST | Request body (required) — schema `DecisionEvaluateRequest` (the schema does not declare required properties) | `decisionKey` (string) and `variables` are accepted in the body per schema | The spec marks the request body required; the schema does not list `decisionKey` as required (but tests expect a `decisionKey`). Generated tests POST to DMN REST execute endpoint. |
-| `/case/start` | POST | None (request body **optional**) | Request body (if provided): `key` (string) — schema `CaseStartRequest` | `requestBody.required: false`. Tests call `/cmmn-runtime/case-instances` in Flowable REST. |
+| `/case/start` | POST | None (request body **optional**) | Request body (if provided): `key` (string) — schema `CaseStartRequest` | `requestBody.required: false`. Tests call `/cmmn-apicase-instances` in Flowable REST. |
 
 | `/repository/deployments` | POST | Request body (multipart/form-data) containing `files` (one or more files) | `deploymentName` (string, optional) | Used to deploy BPMN/CMMN/DMN files. Form must include at least one file field (e.g., `-F "files=@my.bpmn"`). |
 
@@ -93,7 +93,7 @@ GET /runtime/tasks?processInstanceId=dummy-process
 }
 ```
 
-- /case/start (mapped to `POST /cmmn-runtime/case-instances`)
+- /case/start (mapped to `POST /cmmn-apicase-instances`)
 
 ```json
 {
@@ -154,10 +154,10 @@ curl -s -X POST 'http://localhost:8080/dmn-rule/execute-decision-service' \
 	-d '{"decisionKey":"isAdult","variables":{"age":20}}'
 ```
 
-- Start a case (Flowable CMMN REST: POST /cmmn-runtime/case-instances)
+- Start a case (Flowable CMMN REST: POST /cmmn-apicase-instances)
 
 ```bash
-curl -s -X POST 'http://localhost:8080/cmmn-runtime/case-instances' \
+curl -s -X POST 'http://localhost:8080/cmmn-apicase-instances' \
 	-H 'Content-Type: application/json' \
 	-d '{"caseDefinitionKey":"simpleCase"}'
 ```
