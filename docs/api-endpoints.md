@@ -1,15 +1,63 @@
-# API Endpoints (Extracted from OpenAPI)
+# Flowable REST API (generated)
 
-| Method | Path | Summary | Request Schema | Response Schema | Example curl |
-|--------|------|---------|----------------|-----------------|--------------|
-| POST | /process/start | Start a process instance (test controller) | `ProcessStartRequest` ({ key }) | `ProcessStartResponse` ({ processInstanceId, processDefinitionKey, tasks }) | `curl -X POST -H "Content-Type: application/json" -d '{"key":"simpleProcess"}' http://localhost:8080/process/start` |
-| GET | /process/tasks | Query tasks by processInstanceId | query: `processInstanceId` | array of `Task` | `curl 'http://localhost:8080/process/tasks?processInstanceId=dummy-process'` |
-| POST | /process/tasks/{id}/complete | Complete a task | path: `id` | 200 / 404 | `curl -X POST -H "Content-Type: application/json" -d '{}' http://localhost:8080/process/tasks/123/complete` |
-| POST | /process/instances/{id}/variables | Set process instance variables | `VariableMap` (obj) | 200 | `curl -X POST -H "Content-Type: application/json" -d '{"approved":true}' http://localhost:8080/process/instances/123/variables` |
-| POST | /process/message | Correlate a message to a process execution | `MessageCorrelateRequest` ({ messageName, processInstanceId, variables }) | 200 / 400 / 404 | `curl -X POST -H "Content-Type: application/json" -d '{"messageName":"Ping","processInstanceId":"fake-id"}' http://localhost:8080/process/message` |
-| POST | /decision/evaluate | Evaluate a DMN decision (test controller) | `DecisionEvaluateRequest` ({ decisionKey, variables }) | array of `DecisionResult` | `curl -X POST -H "Content-Type: application/json" -d '{"decisionKey":"isAdult","variables":{"age":20}}' http://localhost:8080/decision/evaluate` |
-| POST | /case/start | Start a CMMN case instance (test controller) | `CaseStartRequest` ({ key }) | `CaseStartResponse` ({ caseInstanceId, tasks }) | `curl -X POST -H "Content-Type: application/json" -d '{"key":"simpleCase"}' http://localhost:8080/case/start` |
+This document summarizes the Flowable REST API that was captured from the running server at http://localhost:32986/flowable-rest/docs and stores references to the generated OpenAPI/Swagger artifacts in this repository.
+
+Files produced during capture (click to open):
+
+- Swagger UI HTML: [`docs/openapi/docs.html`](docs/openapi/docs.html:1)
+- Per-module Swagger JSON specs:
+  - [`docs/openapi/flowable-swagger-process.json`](docs/openapi/flowable-swagger-process.json:1)
+  - [`docs/openapi/flowable-swagger-idm.json`](docs/openapi/flowable-swagger-idm.json:1)
+  - [`docs/openapi/flowable-swagger-cmmn.json`](docs/openapi/flowable-swagger-cmmn.json:1)
+  - [`docs/openapi/flowable-swagger-eventregistry.json`](docs/openapi/flowable-swagger-eventregistry.json:1)
+  - [`docs/openapi/flowable-swagger-app.json`](docs/openapi/flowable-swagger-app.json:1)
+  - [`docs/openapi/flowable-swagger-external-worker.json`](docs/openapi/flowable-swagger-external-worker.json:1)
+- Local single-file spec bundled in repo: [`docs/openapi/flowable-7.2.0-openapi.yaml`](docs/openapi/flowable-7.2.0-openapi.yaml:1)
+
+Notes about capture
+
+- The Swagger UI HTML was fetched successfully and saved to [`docs/openapi/docs.html`](docs/openapi/docs.html:1).
+- Aggregated endpoints such as `/flowable-rest/openapi.json` and `/flowable-rest/v2/api-docs` were either not present or required Basic authentication. Authentication was provided as `rest-admin:test` to fetch some resources.
+- When an endpoint returned 401/404 the per-module specfiles referenced from the Swagger UI were fetched instead.
+
+How the repo now contains the API docs
+
+- If you want a single consolidated spec, use the bundled spec [`docs/openapi/flowable-7.2.0-openapi.yaml`](docs/openapi/flowable-7.2.0-openapi.yaml:1) or merge the per-module JSONs listed above.
+
+Quick reference table (examples extracted)
+
+| Method | Path | Summary |
+|--------|------|---------|
+| POST | /process/form/form-data | Submit task form data | 
+| GET  | /history/historic-activity-instances | List historic activity instances |
+| GET  | /identity/groups | List groups |
+| POST | /identity/users | Create a user |
+
+(These examples are representative; see per-module JSON files for full endpoints and schema definitions.)
+
+How to produce a Markdown API document from the OpenAPI spec
+
+1. Use the bundled YAML: [`docs/openapi/flowable-7.2.0-openapi.yaml`](docs/openapi/flowable-7.2.0-openapi.yaml:1) as the canonical source.
+2. To convert YAML -> Markdown automatically you can run a local tool such as `widdershins` or `redocly` locally. Example (run locally):
+
+```bash
+# install widdershins (node)
+# npm install -g widdershins
+widdershins docs/openapi/flowable-7.2.0-openapi.yaml -o docs/openapi/flowable-api.md
+```
+
+3. Alternatively, I can merge the per-module JSON specs into a single OpenAPI YAML and generate a Markdown document here if you want — reply with MERGE_AND_GENERATE and I'll create `docs/openapi/flowable-rest-merged.yaml` and `docs/openapi/flowable-api.md`.
+
+Credentials and access
+
+- Some aggregator endpoints require Basic auth. You provided `rest-admin:test` during capture to fetch protected resources. Keep credentials secure.
+
+Next actions (choose one and reply with the exact keyword):
+
+- MERGE_AND_GENERATE — Merge per-module specs and generate `docs/openapi/flowable-api.md` (Markdown) here.
+- USE_LOCAL_SPEC — Use the bundled `docs/openapi/flowable-7.2.0-openapi.yaml` and run a converter locally (I will provide exact commands).
+- NOTHING — No further action; document saved.
 
 ---
 
-> Note: Example curl commands assume the application runs on http://localhost:8080 and that the API uses JSON. For endpoints that may return 4xx when no data/definitions are present, examples are provided for the nominal request payloads.
+Generated by automated capture on server http://localhost:32986/flowable-rest/docs.
