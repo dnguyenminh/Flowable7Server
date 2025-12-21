@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cmmn:definitions xmlns:cmmn="http://www.omg.org/spec/CMMN/20151101/MODEL" id="simpleCaseDef">
-  <cmmn:case id="simpleCase" name="Simple Case">
-  </cmmn:case>
-</cmmn:definitions>

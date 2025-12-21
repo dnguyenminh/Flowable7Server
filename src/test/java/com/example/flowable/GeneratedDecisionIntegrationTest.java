@@ -39,7 +39,7 @@ public class GeneratedDecisionIntegrationTest {
         vars.put("age", 20);
         body.put("variables", vars);
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/decision/evaluate", entity, String.class);
+        ResponseEntity<String> resp = rest.postForEntity("/dmn-rule/execute-decision-service", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
         if (resp.getStatusCode().is2xxSuccessful()) {
             ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +60,7 @@ public class GeneratedDecisionIntegrationTest {
         Map<String,Object> body = new HashMap<>();
         body.put("decisionKey", "isAdult");
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/decision/evaluate", entity, String.class);
+        ResponseEntity<String> resp = rest.postForEntity("/dmn-rule/execute-decision-service", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
     }
 

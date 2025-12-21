@@ -31,16 +31,19 @@ public class GeneratedOpenApiIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
-        body.put("key", "simpleProcess");
+        body.put("processDefinitionKey", "simpleProcess");
+        java.util.List<Map<String,Object>> vars = new java.util.ArrayList<>();
+        Map<String,Object> v1 = new HashMap<>(); v1.put("name", "approved"); v1.put("value", true); vars.add(v1);
+        body.put("variables", vars);
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/process/start", entity, String.class);
+        ResponseEntity<String> resp = rest.postForEntity("/runtime/process-instances", entity, String.class);
         // allow 2xx or 4xx client responses when no process definitions are deployed
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();
     }
 
     @Test
     public void test_get__process_tasks() throws Exception {
-        ResponseEntity<String> resp = rest.getForEntity("/process/tasks?processInstanceId=dummy-process", String.class);
+        ResponseEntity<String> resp = rest.getForEntity("/runtime/tasks?processInstanceId=dummy-process", String.class);
         // allow 2xx or 4xx client responses when no process data is present
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();
     }
@@ -50,8 +53,8 @@ public class GeneratedOpenApiIntegrationTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         Map<String,Object> body = new HashMap<>();
-        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/process/tasks/dummy-id/complete", entity, String.class);
+        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(Map.of("action","complete"), headers);
+        ResponseEntity<String> resp = rest.postForEntity("/runtime/tasks/dummy-id", entity, String.class);
         // allow 2xx or 4xx when the task id is missing
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();
     }
@@ -60,10 +63,10 @@ public class GeneratedOpenApiIntegrationTest {
     public void test_post__process_instances__id__variables() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        Map<String,Object> body = new HashMap<>();
-        body.put("approved", true);
-        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/process/instances/dummy-id/variables", entity, String.class);
+        java.util.List<Map<String,Object>> body = new java.util.ArrayList<>();
+        Map<String,Object> v = new HashMap<>(); v.put("name", "approved"); v.put("value", true); body.add(v);
+        HttpEntity<java.util.List<Map<String,Object>>> entity = new HttpEntity<>(body, headers);
+        ResponseEntity<String> resp = rest.postForEntity("/runtime/process-instances/dummy-id/variables", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
     }
 
@@ -75,7 +78,7 @@ public class GeneratedOpenApiIntegrationTest {
         body.put("messageName", "Ping");
         body.put("processInstanceId", "fake-id");
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/process/message", entity, String.class);
+        ResponseEntity<String> resp = rest.postForEntity("/runtime/executions/dummy-id/message", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();
     }
 

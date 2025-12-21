@@ -105,16 +105,21 @@ public class OpenApiToTestsGenerator {
                             sb.append("        Map<String,Object> vars = new HashMap<>();\n");
                             sb.append("        vars.put(\"age\", 20);\n");
                             sb.append("        body.put(\"variables\", vars);\n");
+                        } else if (path.contains("/process/start")) {
+                            // Use official Flowable REST to start a process instance
+                            sb.append("        Map<String,Object> body = new HashMap<>();\n");
+                            sb.append("        body.put(\"processDefinitionKey\", \"simpleProcess\");\n");
+                            sb.append("        java.util.List<Map<String,Object>> vars = new java.util.ArrayList<>();\n");
+                            sb.append("        Map<String,Object> v1 = new HashMap<>(); v1.put(\"name\", \"approved\"); v1.put(\"value\", true); vars.add(v1);\n");
+                            sb.append("        body.put(\"variables\", vars);\n");
                         } else if (path.contains("message")) {
                             sb.append("        Map<String,Object> body = new HashMap<>();\n");
                             sb.append("        body.put(\"messageName\", \"Ping\");\n");
                             sb.append("        body.put(\"processInstanceId\", \"fake-id\");\n");
-                        } else if (path.contains("instances")) {
-                            sb.append("        Map<String,Object> body = new HashMap<>();\n");
-                            sb.append("        body.put(\"approved\", true);\n");
-                        } else if (path.contains("/process/start")) {
-                            sb.append("        Map<String,Object> body = new HashMap<>();\n");
-                            sb.append("        body.put(\"key\", \"simpleProcess\");\n");
+                        } else if (path.contains("/process/instances")) {
+                            // Set variables as list of variable objects for Flowable REST
+                            sb.append("        java.util.List<Map<String,Object>> body = new java.util.ArrayList<>();\n");
+                            sb.append("        Map<String,Object> v = new HashMap<>(); v.put(\"name\", \"approved\"); v.put(\"value\", true); body.add(v);\n");
                         } else if (path.contains("/case/start")) {
                             sb.append("        Map<String,Object> body = new HashMap<>();\n");
                             sb.append("        body.put(\"key\", \"simpleCase\");\n");
@@ -122,11 +127,30 @@ public class OpenApiToTestsGenerator {
                             sb.append("        Map<String,Object> body = new HashMap<>();\n");
                         }
 
-                        // sanitize path params
                         String safePath = sanitizePath(path);
-                        sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
-                        sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"")
-                                .append(safePath).append("\", entity, String.class);\n");
+                        if (path.contains("/process/start")) {
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/runtime/process-instances\", entity, String.class);\n");
+                        } else if (path.contains("/process/message")) {
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/runtime/executions/dummy-id/message\", entity, String.class);\n");
+                        } else if (path.contains("/process/instances")) {
+                            sb.append("        HttpEntity<java.util.List<Map<String,Object>>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/runtime/process-instances/dummy-id/variables\", entity, String.class);\n");
+                        } else if (path.contains("tasks") && path.contains("complete")) {
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(Map.of(\"action\", \"complete\"), headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/runtime/tasks/dummy-id\", entity, String.class);\n");
+                        } else if (path.contains("/case/start")) {
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/cmmn-runtime/case-instances\", entity, String.class);\n");
+                        } else if (path.contains("decision")) {
+                            // Post to Flowable DMN REST service endpoint
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/dmn-rule/execute-decision-service\", entity, String.class);\n");
+                        } else {
+                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"").append(safePath).append("\", entity, String.class);\n");
+                        }
 
                         if (path.contains("decision")) {
                             sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();\n");
@@ -149,9 +173,8 @@ public class OpenApiToTestsGenerator {
                             sb.append("        headers.setContentType(MediaType.APPLICATION_JSON);\n");
                             sb.append("        Map<String,Object> body = new HashMap<>();\n");
                             sb.append("        body.put(\"decisionKey\", \"isAdult\");\n");
-                            sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
-                            sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"")
-                                    .append(safePath).append("\", entity, String.class);\n");
+                                sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
+                                sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/dmn-rule/execute-decision-service\", entity, String.class);\n");
                             sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError() || resp.getStatusCode().is5xxServerError()).isTrue();\n");
                             sb.append("    }\n\n");
                             cnt++;
@@ -164,7 +187,7 @@ public class OpenApiToTestsGenerator {
                                         sb.append("        if (resp.getStatusCode().is2xxSuccessful()) {\n");
                                         sb.append("            ObjectMapper mapper = new ObjectMapper();\n");
                                         sb.append("            java.util.Map<?,?> map = mapper.readValue(resp.getBody(), java.util.Map.class);\n");
-                                        sb.append("            assertThat(map.containsKey(\"processInstanceId\") || map.containsKey(\"processDefinitionKey\")).isTrue();\n");
+                                        sb.append("            assertThat(map.containsKey(\"id\") || map.containsKey(\"processInstanceId\") || map.containsKey(\"processDefinitionKey\")).isTrue();\n");
                                         sb.append("            java.io.InputStream fixture = getClass().getResourceAsStream(\"/fixtures/process_start_simpleProcess.json\");\n");
                                         sb.append("            if (fixture != null) {\n");
                                         sb.append("                java.util.Map<?,?> expected = mapper.readValue(fixture, java.util.Map.class);\n");
@@ -221,7 +244,7 @@ public class OpenApiToTestsGenerator {
                                 }
                             }
                             if (hasProcessInstanceId) {
-                                url = url + (url.contains("?") ? "&" : "?") + "processInstanceId=dummy-process";
+                                url = "/runtime/tasks?processInstanceId=dummy-process";
                             }
                             sb.append("        ResponseEntity<String> resp = rest.getForEntity(\"").append(url).append("\", String.class);\n");
                             sb.append("        // allow 2xx or 4xx client responses from endpoints when no data is present\n");
@@ -237,10 +260,8 @@ public class OpenApiToTestsGenerator {
                             if ("post".equalsIgnoreCase(method) && path.contains("tasks") && path.contains("complete")) {
                                 sb.append("        HttpHeaders headers = new HttpHeaders();\n");
                                 sb.append("        headers.setContentType(MediaType.APPLICATION_JSON);\n");
-                                sb.append("        Map<String,Object> body = new HashMap<>();\n");
-                                sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);\n");
-                                String safePath = sanitizePath(path);
-                                sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"").append(safePath).append("\", entity, String.class);\n");
+                                sb.append("        HttpEntity<Map<String,Object>> entity = new HttpEntity<>(Map.of(\"action\", \"complete\"), headers);\n");
+                                sb.append("        ResponseEntity<String> resp = rest.postForEntity(\"/runtime/tasks/dummy-id\", entity, String.class);\n");
                                 sb.append("        // allow 2xx or 4xx when the resource id is missing\n");
                                 sb.append("        assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();\n");
                             } else {

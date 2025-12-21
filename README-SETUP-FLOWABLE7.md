@@ -158,6 +158,24 @@ server.port=8080
 management.endpoints.web.exposure.include=health,info,metrics
 ```
 
+Test note: there is a Testcontainers-based integration test that starts the official Flowable REST image and performs a REST smoke check. To run the full deploy/start workflow the test reads the following environment variables and will skip authenticated steps if they are not set:
+
+- `FLOWABLE_REST_ADMIN_USER` — admin username for the REST API
+- `FLOWABLE_REST_ADMIN_PASSWORD` — password for the REST API
+
+Example (run locally with credentials):
+
+```bash
+FLOWABLE_REST_ADMIN_USER=admin FLOWABLE_REST_ADMIN_PASSWORD=test mvn -Dtest=FlowableRestIT test
+```
+
+CI note: to run the authenticated REST integration job in GitHub Actions, add the following repository secrets:
+
+- `FLOWABLE_REST_ADMIN_USER` — admin username to be used by the test job
+- `FLOWABLE_REST_ADMIN_PASSWORD` — password for that user
+
+After adding these secrets, the `REST Integration Tests (Flowable - authenticated)` workflow will run a full deployment and start sequence against the official Flowable REST container and assert process/case creation.
+
 You can pass these as CLI args, environment variables (SPRING_DATASOURCE_URL), or in `application.properties` / `application.yml`.
 
 ---

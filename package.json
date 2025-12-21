@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "js-yaml": "^4.1.1",
+    "playwright": "^1.36.0",
+    "widdershins": "^4.0.1"
+  }
+}

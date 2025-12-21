@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:flowable="http://flowable.org/cmmn" id="definitions_bulk" targetNamespace="http://flowable.org/cmmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <cmmn:case id="skipTracingCase" name="Bulk Upload Case">
+    <cmmn:casePlanModel id="casePlanModel_bulk" name="Bulk Upload Request">
+      <cmmn:planItem id="pi_import" definitionRef="humanTask_import">
+        <cmmn:entryCriterion id="entry_restart_import" sentryRef="sentry_restart_import" />
+        <cmmn:exitCriterion id="exit_reassign_import" sentryRef="sentry_reassign_btn" />
+      </cmmn:planItem>
+      <cmmn:planItem id="pi_reassign_btn" definitionRef="eventListener_reassign" />
+      <cmmn:planItem id="pi_change_supporter" definitionRef="humanTask_change_supporter">
+        <cmmn:entryCriterion id="entry_change_supporter" sentryRef="sentry_reassign_btn" />
+      </cmmn:planItem>
+      <cmmn:planItem id="pi_process" definitionRef="processTask_file">
+        <cmmn:entryCriterion id="entry_process" sentryRef="sentry_start_process" />
+      </cmmn:planItem>
+      <cmmn:planItem id="pi_milestone" definitionRef="milestone_complete">
+        <cmmn:entryCriterion id="entry_milestone" sentryRef="sentry_milestone" />
+      </cmmn:planItem>
+      <cmmn:sentry id="sentry_reassign_btn">
+        <cmmn:planItemOnPart id="onPart_reassign_click" sourceRef="pi_reassign_btn">
+          <cmmn:standardEvent>occur</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:sentry id="sentry_restart_import">
+        <cmmn:planItemOnPart id="onPart_supporter_changed" sourceRef="pi_change_supporter">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:sentry id="sentry_start_process">
+        <cmmn:planItemOnPart id="onPart_import" sourceRef="pi_import">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:sentry id="sentry_milestone">
+        <cmmn:planItemOnPart id="onPart_process" sourceRef="pi_process">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+      <cmmn:humanTask id="humanTask_import" name="Import Excel File" flowable:assignee="${supporter}" />
+      <cmmn:userEventListener id="eventListener_reassign" name="Reassign Task" />
+      <cmmn:humanTask id="humanTask_change_supporter" name="Select New Supporter" flowable:assignee="teamLead" />
+      <cmmn:processTask id="processTask_file" name="Process File Logic" processRef="process_bulk_file_handling">
+        <cmmn:extensionElements>
+          <flowable:in source="fileId" target="fileId" />
+        </cmmn:extensionElements>
+      </cmmn:processTask>
+      <cmmn:milestone id="milestone_complete" name="Upload Completed" />
+    </cmmn:casePlanModel>
+  </cmmn:case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_Bulk">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel" cmmnElementRef="casePlanModel_bulk">
+        <dc:Bounds x="156" y="100" width="750" height="400" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_PI_Import" cmmnElementRef="pi_import">
+        <dc:Bounds x="496" y="180" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_PI_Reassign" cmmnElementRef="pi_reassign_btn">
+        <dc:Bounds x="389" y="343" width="30" height="30" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="368" y="373" width="72" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_PI_ChangeSup" cmmnElementRef="pi_change_supporter">
+        <dc:Bounds x="193" y="180" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_PI_Process" cmmnElementRef="pi_process">
+        <dc:Bounds x="747" y="180" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_PI_Milestone" cmmnElementRef="pi_milestone">
+        <dc:Bounds x="739" y="338" width="100" height="40" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_Exit_Reassign" cmmnElementRef="exit_reassign_import">
+        <dc:Bounds x="536" y="245" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_Entry_Restart_Import" cmmnElementRef="entry_restart_import">
+        <dc:Bounds x="486" y="205" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_Entry_ChangeSup" cmmnElementRef="entry_change_supporter">
+        <dc:Bounds x="237" y="246" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_Entry_Process" cmmnElementRef="entry_process">
+        <dc:Bounds x="737" y="205" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="DI_Entry_Milestone" cmmnElementRef="entry_milestone">
+        <dc:Bounds x="787" y="324" width="20" height="28" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="Edge_Process" cmmnElementRef="onPart_import" sourceCMMNElementRef="pi_import" targetCMMNElementRef="entry_process">
+        <di:waypoint x="596" y="220" />
+        <di:waypoint x="737" y="220" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="400" y="210" width="51" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="Edge_Milestone" cmmnElementRef="onPart_process" sourceCMMNElementRef="pi_process" targetCMMNElementRef="entry_milestone">
+        <di:waypoint x="797" y="260" />
+        <di:waypoint x="797" y="324" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="780" y="276.5" width="51" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="Edge_Reassign_Exit" cmmnElementRef="onPart_reassign_click" sourceCMMNElementRef="pi_reassign_btn" targetCMMNElementRef="exit_reassign_import">
+        <di:waypoint x="419" y="358" />
+        <di:waypoint x="546" y="358" />
+        <di:waypoint x="546" y="273" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="491" y="352" width="33" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="Edge_Reassign_Enter" cmmnElementRef="onPart_reassign_click" sourceCMMNElementRef="pi_reassign_btn" targetCMMNElementRef="entry_change_supporter">
+        <di:waypoint x="389" y="358" />
+        <di:waypoint x="247" y="358" />
+        <di:waypoint x="247" y="274" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="301" y="352" width="33" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="Edge_Restart_Import" cmmnElementRef="onPart_supporter_changed" sourceCMMNElementRef="pi_change_supporter" targetCMMNElementRef="entry_restart_import">
+        <di:waypoint x="293" y="220" />
+        <di:waypoint x="433" y="219" />
+        <di:waypoint x="486" y="219" />
+        <cmmndi:CMMNLabel>
+          <dc:Bounds x="430" y="193.5" width="51" height="12" />
+        </cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

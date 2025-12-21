@@ -1,8 +1,0 @@
-Method,Path,Summary,Request Schema,Response Schema,Example curl
-POST,/process/start,"Start a process instance (test controller)",ProcessStartRequest,ProcessStartResponse,"curl -X POST -H ""Content-Type: application/json"" -d '{""key"":""simpleProcess""}' http://localhost:8080/process/start"
-GET,"/process/tasks","Query tasks by processInstanceId","query: processInstanceId","array of Task","curl 'http://localhost:8080/process/tasks?processInstanceId=dummy-process'"
-POST,"/process/tasks/{id}/complete","Complete a task","path: id","200 / 404","curl -X POST -H ""Content-Type: application/json"" -d '{}' http://localhost:8080/process/tasks/123/complete"
-POST,"/process/instances/{id}/variables","Set process instance variables","VariableMap","200","curl -X POST -H ""Content-Type: application/json"" -d '{""approved"":true}' http://localhost:8080/process/instances/123/variables"
-POST,/process/message,"Correlate a message to a process execution","MessageCorrelateRequest","200 / 400 / 404","curl -X POST -H ""Content-Type: application/json"" -d '{""messageName"":""Ping"",""processInstanceId"":""fake-id""}' http://localhost:8080/process/message"
-POST,/decision/evaluate,"Evaluate a DMN decision (test controller)",DecisionEvaluateRequest,"array of DecisionResult","curl -X POST -H ""Content-Type: application/json"" -d '{""decisionKey"":""isAdult"",""variables"":{""age"":20}}' http://localhost:8080/decision/evaluate"
-POST,/case/start,"Start a CMMN case instance (test controller)",CaseStartRequest,CaseStartResponse,"curl -X POST -H ""Content-Type: application/json"" -d '{""key"":""simpleCase""}' http://localhost:8080/case/start"

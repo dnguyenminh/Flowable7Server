@@ -23,6 +23,8 @@ dependencies {
     implementation "org.flowable:flowable-spring-boot-starter-process:${flowableVersion}"
     implementation "org.flowable:flowable-spring-boot-starter-cmmn:${flowableVersion}"
     implementation "org.flowable:flowable-spring-boot-starter-dmn:${flowableVersion}"
+    // Flowable REST starter: expose official Flowable REST endpoints in-process
+    implementation "org.flowable:flowable-spring-boot-starter-rest:${flowableVersion}"
 
     runtimeOnly 'org.postgresql:postgresql'
 

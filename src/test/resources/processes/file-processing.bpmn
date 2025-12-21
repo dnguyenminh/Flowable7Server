@@ -1,44 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
-             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" 
-             xmlns:di="http://www.omg.org/spec/DD/20100524/DI" 
-             xmlns:flowable="http://flowable.org/bpmn"
-             typeLanguage="http://www.w3.org/2001/XMLSchema" 
-             expressionLanguage="http://www.w3.org/1999/XPath" 
-             targetNamespace="http://www.flowable.org/processdef"
-             id="definitions_bpmn">
-
-  <process id="process_bulk_file_handling" name="Bulk File Processing" isExecutable="true">
-    
-    <startEvent id="startEvent" name="Start" />
-    
-    <serviceTask id="task_parse" name="Call Parse API" flowable:type="http">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:open-bpmn="http://open-bpmn.org/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="definitions_bpmn" targetNamespace="http://www.flowable.org/processdef" typeLanguage="http://www.w3.org/2001/XMLSchema">
+  <process id="process_bulk_file_handling" isExecutable="true" name="Bulk File Processing" processType="Public">
+    <documentation id="documentation_9Lwt0Q"/>
+    <extensionElements>
+      <open-bpmn:auto-align/>
+    </extensionElements>
+    <startEvent id="startEvent" name="Start">
+      <documentation id="documentation_QyzJkQ"/>
+    </startEvent>
+    <serviceTask flowable:type="http" id="task_parse" name="Call Parse API">
+      <documentation id="documentation_Wy4qzQ"/>
       <extensionElements>
         <flowable:field name="requestMethod">
           <flowable:string><![CDATA[POST]]></flowable:string>
         </flowable:field>
-        
         <flowable:field name="requestUrl">
           <flowable:string><![CDATA[http://localhost:8080/api/files/parse]]></flowable:string>
         </flowable:field>
-        
         <flowable:field name="requestHeaders">
           <flowable:string><![CDATA[Content-Type: application/json]]></flowable:string>
         </flowable:field>
-        
         <flowable:field name="requestBody">
           <flowable:expression><![CDATA[{"fileId": "${fileId}"}]]></flowable:expression>
         </flowable:field>
-        
         <flowable:field name="responseVariableName">
           <flowable:string><![CDATA[parsedResult]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
-    
     <scriptTask id="task_round_robin" name="Calculate Round Robin" scriptFormat="groovy">
+      <documentation id="documentation_M06W5w"/>
       <script>
         // Example logic: Parse the JSON response from the API
         // In a real scenario, you might use groovy.json.JsonSlurper
@@ -52,63 +43,74 @@
         execution.setVariable("assignmentList", assignments);
       </script>
     </scriptTask>
-    
-    <callActivity id="call_create_case" name="Create Skip Tracing Case" calledElement="skipTracingCase" flowable:caseRef="skipTracingCase" flowable:businessKey="${assignment.cif}">
+    <callActivity calledElement="skipTracingCase" flowable:businessKey="${assignment.cif}" flowable:caseRef="skipTracingCase" id="call_create_case" name="Create Skip Tracing Case">
+      <documentation id="documentation_Fyf72g"/>
       <extensionElements>
-        <flowable:in sourceExpression="${assignment.cif}" target="cif" />
-        <flowable:in sourceExpression="${assignment.operator}" target="assignedOperator" />
-        <flowable:in sourceExpression="${assignment.personId}" target="personId" />
+        <flowable:in sourceExpression="${assignment.cif}" target="cif"/>
+        <flowable:in sourceExpression="${assignment.operator}" target="assignedOperator"/>
+        <flowable:in sourceExpression="${assignment.personId}" target="personId"/>
       </extensionElements>
-      <multiInstanceLoopCharacteristics isSequential="false" flowable:collection="assignmentList" flowable:elementVariable="assignment" />
+      <multiInstanceLoopCharacteristics flowable:collection="assignmentList" flowable:elementVariable="assignment" isSequential="false"/>
     </callActivity>
-    
-    <endEvent id="endEvent" name="End" />
-
-    <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="task_parse" />
-    <sequenceFlow id="flow2" sourceRef="task_parse" targetRef="task_round_robin" />
-    <sequenceFlow id="flow3" sourceRef="task_round_robin" targetRef="call_create_case" />
-    <sequenceFlow id="flow4" sourceRef="call_create_case" targetRef="endEvent" />
+    <endEvent id="endEvent" name="End">
+      <documentation id="documentation_vFa2AA"/>
+    </endEvent>
+    <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="task_parse">
+      <documentation id="documentation_n5ipCw"/>
+    </sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="task_parse" targetRef="task_round_robin">
+      <documentation id="documentation_FH67zA"/>
+    </sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="task_round_robin" targetRef="call_create_case">
+      <documentation id="documentation_BsHt0Q"/>
+    </sequenceFlow>
+    <sequenceFlow id="flow4" sourceRef="call_create_case" targetRef="endEvent">
+      <documentation id="documentation_b70UGA"/>
+    </sequenceFlow>
   </process>
-
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_bulk_file_handling">
-      <bpmndi:BPMNShape id="shape_start" bpmnElement="startEvent">
-        <dc:Bounds x="100" y="100" width="30" height="30" />
+    <bpmndi:BPMNPlane bpmnElement="process_bulk_file_handling" id="BPMNPlane_1">
+      <bpmndi:BPMNShape bpmnElement="startEvent" id="shape_start">
+        <dc:Bounds height="30" width="30" x="100" y="100"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_gdZUyA">
+          <dc:Bounds height="20.0" width="100.0" x="68.0" y="139.0"/>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      
-      <bpmndi:BPMNShape id="shape_parse" bpmnElement="task_parse">
-        <dc:Bounds x="180" y="75" width="100" height="80" />
+      <bpmndi:BPMNShape bpmnElement="task_parse" id="shape_parse">
+        <dc:Bounds height="80" width="100" x="180" y="75"/>
       </bpmndi:BPMNShape>
-      
-      <bpmndi:BPMNShape id="shape_rr" bpmnElement="task_round_robin">
-        <dc:Bounds x="330" y="75" width="100" height="80" />
+      <bpmndi:BPMNShape bpmnElement="task_round_robin" id="shape_rr">
+        <dc:Bounds height="80" width="100" x="330" y="75"/>
       </bpmndi:BPMNShape>
-      
-      <bpmndi:BPMNShape id="shape_call" bpmnElement="call_create_case">
-        <dc:Bounds x="480" y="75" width="100" height="80" />
+      <bpmndi:BPMNShape bpmnElement="call_create_case" id="shape_call">
+        <dc:Bounds height="80" width="100" x="480" y="75"/>
       </bpmndi:BPMNShape>
-      
-      <bpmndi:BPMNShape id="shape_end" bpmnElement="endEvent">
-        <dc:Bounds x="630" y="100" width="30" height="30" />
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="shape_end">
+        <dc:Bounds height="30" width="30" x="630" y="100"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_sDp5UA">
+          <dc:Bounds height="20.0" width="100.0" x="598.0" y="139.0"/>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      
-      <bpmndi:BPMNEdge id="edge_1" bpmnElement="flow1">
-        <di:waypoint x="130" y="115" />
-        <di:waypoint x="180" y="115" />
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="edge_1">
+        <di:waypoint x="136.0" y="118.0"/>
+        <di:waypoint x="158.0" y="118.0"/>
+        <di:waypoint x="158.0" y="115.0"/>
+        <di:waypoint x="180.0" y="115.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_2" bpmnElement="flow2">
-        <di:waypoint x="280" y="115" />
-        <di:waypoint x="330" y="115" />
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="edge_2">
+        <di:waypoint x="280.0" y="115.0"/>
+        <di:waypoint x="330.0" y="115.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_3" bpmnElement="flow3">
-        <di:waypoint x="430" y="115" />
-        <di:waypoint x="480" y="115" />
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="edge_3">
+        <di:waypoint x="430.0" y="115.0"/>
+        <di:waypoint x="480.0" y="115.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="edge_4" bpmnElement="flow4">
-        <di:waypoint x="580" y="115" />
-        <di:waypoint x="630" y="115" />
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="edge_4">
+        <di:waypoint x="580.0" y="115.0"/>
+        <di:waypoint x="605.0" y="115.0"/>
+        <di:waypoint x="605.0" y="118.0"/>
+        <di:waypoint x="630.0" y="118.0"/>
       </bpmndi:BPMNEdge>
-      
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </definitions>

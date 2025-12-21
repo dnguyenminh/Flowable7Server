@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" 
+                  xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" 
+                  xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" 
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI"
+                  xmlns:flowable="http://flowable.org/cmmn"
+                  id="definitions_skiptrace" 
+                  targetNamespace="http://flowable.org/cmmn">
+
+  <cmmn:case id="skipTracingCase" name="Skip Tracing Case">
+    <cmmn:casePlanModel id="casePlanModel_skip" name="Skip Tracing Work">
+      
+      <cmmn:planItem id="pi_skiptrace" definitionRef="humanTask_skiptrace">
+        <cmmn:entryCriterion id="entry_restart" sentryRef="sentry_restart" />
+        <cmmn:exitCriterion id="exit_reallocate" sentryRef="sentry_reallocate" />
+      </cmmn:planItem>
+      
+      <cmmn:planItem id="pi_reallocate_btn" definitionRef="eventListener_reallocate" />
+
+      <cmmn:planItem id="pi_select_new" definitionRef="humanTask_select_new">
+        <cmmn:entryCriterion id="entry_select_new" sentryRef="sentry_reallocate" />
+      </cmmn:planItem>
+      
+      <cmmn:planItem id="pi_cancel" definitionRef="eventListener_cancel" />
+
+      <cmmn:sentry id="sentry_reallocate">
+        <cmmn:planItemOnPart id="onPart_reallocate" sourceRef="pi_reallocate_btn">
+          <cmmn:standardEvent>occur</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+
+      <cmmn:sentry id="sentry_restart">
+        <cmmn:planItemOnPart id="onPart_new_selected" sourceRef="pi_select_new">
+          <cmmn:standardEvent>complete</cmmn:standardEvent>
+        </cmmn:planItemOnPart>
+      </cmmn:sentry>
+
+      <cmmn:humanTask id="humanTask_skiptrace" name="Perform Skip Tracing" flowable:assignee="${assignedOperator}" />
+      
+      <cmmn:userEventListener id="eventListener_reallocate" name="Reallocate" />
+      
+      <cmmn:humanTask id="humanTask_select_new" name="Select New Operator" flowable:assignee="teamLead" />
+      
+      <cmmn:userEventListener id="eventListener_cancel" name="Cancel Case" />
+      
+    </cmmn:casePlanModel>
+  </cmmn:case>
+
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_Skip">
+      <cmmndi:Size width="500" height="500" />
+      <cmmndi:CMMNShape id="DI_CasePlanModel_Skip" cmmnElementRef="casePlanModel_skip">
+        <dc:Bounds x="100" y="100" width="550" height="300" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      
+      <cmmndi:CMMNShape id="DI_PI_Skiptrace" cmmnElementRef="pi_skiptrace">
+        <dc:Bounds x="150" y="180" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+      
+      <cmmndi:CMMNShape id="DI_PI_Reallocate" cmmnElementRef="pi_reallocate_btn">
+        <dc:Bounds x="300" y="320" width="30" height="30" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_PI_SelectNew" cmmnElementRef="pi_select_new">
+        <dc:Bounds x="380" y="180" width="100" height="80" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_PI_Cancel" cmmnElementRef="pi_cancel">
+        <dc:Bounds x="550" y="320" width="30" height="30" />
+        <cmmndi:CMMNLabel />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_Exit_Reallocate" cmmnElementRef="exit_reallocate">
+        <dc:Bounds x="240" y="205" width="20" height="28" />
+      </cmmndi:CMMNShape>
+      
+      <cmmndi:CMMNShape id="DI_Entry_Restart" cmmnElementRef="entry_restart">
+        <dc:Bounds x="140" y="205" width="20" height="28" />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNShape id="DI_Entry_SelectNew" cmmnElementRef="entry_select_new">
+        <dc:Bounds x="370" y="205" width="20" height="28" />
+      </cmmndi:CMMNShape>
+
+      <cmmndi:CMMNEdge id="Edge_Btn_Exit" cmmnElementRef="onPart_reallocate" sourceCMMNElementRef="pi_reallocate_btn" targetCMMNElementRef="exit_reallocate">
+        <di:waypoint x="315" y="320" />
+        <di:waypoint x="315" y="280" />
+        <di:waypoint x="255" y="230" />
+      </cmmndi:CMMNEdge>
+
+      <cmmndi:CMMNEdge id="Edge_Btn_Enter" cmmnElementRef="onPart_reallocate" sourceCMMNElementRef="pi_reallocate_btn" targetCMMNElementRef="entry_select_new">
+        <di:waypoint x="315" y="320" />
+        <di:waypoint x="315" y="280" />
+        <di:waypoint x="375" y="230" />
+      </cmmndi:CMMNEdge>
+
+      <cmmndi:CMMNEdge id="Edge_New_Restart" cmmnElementRef="onPart_new_selected" sourceCMMNElementRef="pi_select_new" targetCMMNElementRef="entry_restart">
+        <di:waypoint x="430" y="180" />
+        <di:waypoint x="430" y="140" />
+        <di:waypoint x="150" y="140" />
+        <di:waypoint x="150" y="205" />
+      </cmmndi:CMMNEdge>
+
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</cmmn:definitions>

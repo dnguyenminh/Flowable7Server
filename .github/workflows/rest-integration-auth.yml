@@ -1,0 +1,28 @@
+name: REST Integration Tests (Flowable - authenticated)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  rest-integration-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Run authenticated Flowable REST integration test
+        env:
+          FLOWABLE_REST_ADMIN_USER: ${{ secrets.FLOWABLE_REST_ADMIN_USER }}
+          FLOWABLE_REST_ADMIN_PASSWORD: ${{ secrets.FLOWABLE_REST_ADMIN_PASSWORD }}
+        run: |
+          if [ -z "${FLOWABLE_REST_ADMIN_USER}" ] || [ -z "${FLOWABLE_REST_ADMIN_PASSWORD}" ]; then
+            echo "ERROR: Secrets FLOWABLE_REST_ADMIN_USER and FLOWABLE_REST_ADMIN_PASSWORD must be set in repository secrets.";
+            exit 1;
+          fi
+          mvn -Dtest=FlowableRestIT test -B
+        # Note: this job requires Docker available on the runner (GitHub-hosted runners support Docker)

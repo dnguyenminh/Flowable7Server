@@ -1,4 +1,13 @@
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/CmmnApiCaseCreationIT.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/DeploymentCmmnIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/DeploymentIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/ExamplesIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableRestIT.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedCaseIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedDecisionIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedOpenApiIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedProcessIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedRepositoryIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/TestAssignmentCreatorDelegate.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/TestCaseCreatorDelegate.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/TestCleanupHelper.java

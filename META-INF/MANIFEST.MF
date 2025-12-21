@@ -1,0 +1,40 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven Bundle Plugin 5.1.9
+Build-Jdk-Spec: 21
+Implementation-Title: Flowable - CMMN Converter
+Implementation-Version: 7.2.0
+Implementation-Vendor: Flowable
+Bnd-LastModified: 1755769317226
+Bundle-Description: Flowable is a compact and highly efficient workflow 
+ (BPMN, CMMN and DMN) platform for developers, system admins and busines
+ s users
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.html
+Bundle-ManifestVersion: 2
+Bundle-Name: Flowable - CMMN Converter
+Bundle-SymbolicName: org.flowable.cmmn.converter
+Bundle-Vendor: Flowable
+Bundle-Version: 7.2.0
+Export-Package: org.flowable.cmmn.converter;uses:="javax.xml.namespace,j
+ avax.xml.stream,javax.xml.stream.util,javax.xml.validation,org.flowable
+ .cmmn.model,org.flowable.common.engine.api.io,org.slf4j,org.xml.sax";ve
+ rsion="7.2.0",org.flowable.cmmn.converter.exception;uses:="org.flowable
+ .common.engine.api";version="7.2.0",org.flowable.cmmn.converter.export;
+ uses:="javax.xml.stream,org.flowable.cmmn.converter,org.flowable.cmmn.m
+ odel";version="7.2.0",org.flowable.cmmn.converter.util;uses:="javax.xml
+ .stream,org.flowable.cmmn.converter,org.flowable.cmmn.model";version="7
+ .2.0",org.flowable.cmmn.converter.util;version="7.2.0",org.flowable.cmm
+ n.converter.exception;version="7.2.0"
+Import-Package: org.flowable.cmmn.converter;version="[7.2,7.3)",org.flow
+ able.cmmn.converter.exception;version="[7.2,7.3)",org.flowable.cmmn.con
+ verter.export;version="[7.2,7.3)",org.flowable.cmmn.converter.util;vers
+ ion="[7.2,7.3)",org.flowable.cmmn.model;version="[7.2,7.3)",org.flowabl
+ e.common.engine.api;version="[7.2,7.3)",org.flowable.common.engine.api.
+ io;version="[7.2,7.3)",java.io,java.lang,java.lang.invoke,java.net,java
+ .text,java.util,java.util.function,java.util.stream,javax.xml.namespace
+ ,javax.xml.stream,javax.xml.stream.util,javax.xml.transform,javax.xml.t
+ ransform.stax,javax.xml.transform.stream,javax.xml.validation,org.apach
+ e.commons.lang3;version="[3.18,4)",org.slf4j;version="[2.0,3)",org.xml.
+ sax,org.flowable.osgi;resolution:=optional
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=17))"
+Tool: Bnd-6.3.1.202206071316
+

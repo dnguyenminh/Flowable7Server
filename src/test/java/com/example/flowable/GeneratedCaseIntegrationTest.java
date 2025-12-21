@@ -36,7 +36,7 @@ public class GeneratedCaseIntegrationTest {
         Map<String,Object> body = new HashMap<>();
         body.put("key", "simpleCase");
         HttpEntity<Map<String,Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<String> resp = rest.postForEntity("/case/start", entity, String.class);
+        ResponseEntity<String> resp = rest.postForEntity("/cmmn-runtime/case-instances", entity, String.class);
         assertThat(resp.getStatusCode().is2xxSuccessful() || resp.getStatusCode().is4xxClientError()).isTrue();
     }
 
