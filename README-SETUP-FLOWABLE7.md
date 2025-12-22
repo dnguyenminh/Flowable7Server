@@ -169,6 +169,19 @@ Example (run locally with credentials):
 FLOWABLE_REST_ADMIN_USER=admin FLOWABLE_REST_ADMIN_PASSWORD=test mvn -Dtest=FlowableRestIT test
 ```
 
+### Other integration tests & test utilities 🔬
+
+- The repository also includes a focused CMMN integration test `CmmnApiCaseCreationIT` which attempts to create a case via the CMMN REST API. It will try to deploy `src/test/resources/cases/skip-tracing.cmmn` before creating the case (if the file exists), probe likely endpoints, and will skip the test if a compatible CMMN create endpoint is not available on the image used.
+- Useful test helpers are available in `src/test/java/com/example/flowable/FlowableTestUtils.java` (deployment helpers, await helpers that use Awaitility, and HTTP/Feign helpers) and `FlowableFeignClient.java` (typed Feign clients used by tests).
+
+Tip: If you want to run only the focused CMMN test locally, set the credentials and run:
+
+```bash
+FLOWABLE_REST_ADMIN_USER=rest-admin FLOWABLE_REST_ADMIN_PASSWORD=test mvn -Dtest=CmmnApiCaseCreationIT test
+```
+
+The test will log diagnostics on non-success responses to help debugging when running different Flowable REST image variants.
+
 CI note: to run the authenticated REST integration job in GitHub Actions, add the following repository secrets:
 
 - `FLOWABLE_REST_ADMIN_USER` — admin username to be used by the test job
