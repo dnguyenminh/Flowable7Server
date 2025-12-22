@@ -9,6 +9,14 @@ import java.nio.charset.StandardCharsets;
 
 import io.restassured.response.Response;
 
+/**
+ * Test utilities used by integration tests.
+ *
+ * Includes lightweight helpers for authenticated GETs with fallbacks, deployment helpers
+ * for BPMN/CMMN resources, Awaitility-based wait helpers that probe REST endpoints, and
+ * convenience methods used by the integration suite to handle different Flowable REST
+ * image variants.
+ */
 public final class FlowableTestUtils {
     // Mirror the VERBOSE flag used by the tests
     public static final boolean VERBOSE = Boolean.getBoolean("flowable.rest.test.verbose");

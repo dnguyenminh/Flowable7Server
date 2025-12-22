@@ -18,6 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Small OpenFeign-based helper used by tests to probe typed Flowable REST endpoints.
+ *
+ * The nested `FlowableApi` interface describes a small subset of endpoints that the
+ * integration tests exercise (CMMN/BPMN runtime, historic queries, repository deployments
+ * and task actions). The class also provides helper builders and endpoint discovery
+ * helpers used by the test suite.
+ */
 public class FlowableFeignClient {
 
     public interface FlowableApi {
