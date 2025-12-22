@@ -43,6 +43,8 @@ public class FlowableRestIT {
         String base = selectBase(root, user, pass);
 
         // Deploy resources (BPMN + CMMN + combined)
+        // Note: this test deploys and exercises CMMN case creation and historic queries,
+        // and thus covers the same scenario as the focused `CmmnApiCaseCreationIT` test.
         File fileProcessingBpmn = new File("src/test/resources/processes/file-processing.bpmn");
         File bulkUploadCmmn = new File("src/test/resources/cases/bulk-upload.cmmn");
         File skipTracingCmmn = new File("src/test/resources/cases/skip-tracing.cmmn");
