@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:flowable="http://flowable.org/bpmn" targetNamespace="http://www.flowable.org/processdef">
+  <process id="simpleProcess" name="Simple Process" isExecutable="true">
+    <startEvent id="start" />
+    <endEvent id="end" />
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="end" />
+  </process>
+</definitions>

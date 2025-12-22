@@ -70,15 +70,21 @@ public class FetchAndGenerateOpenApiDocs {
         String pass = args.length > 1 ? args[1] : "test";
         // default to 'full' so request/response structures and samples are included
         String mode = args.length > 2 ? args[2] : "full";
+        // any additional args after mode are treated as extra doc URLs to fetch
+        List<String> extraLinks = new ArrayList<>();
+        if (args.length > 3) {
+            for (int i = 3; i < args.length; i++) extraLinks.add(args[i]);
+        }
 
         FetchAndGenerateOpenApiDocs tool = new FetchAndGenerateOpenApiDocs(user, pass);
-        tool.fetchAllAndGenerate(mode);
+        tool.fetchAllAndGenerate(mode, extraLinks);
     }
 
-    public void fetchAllAndGenerate(String mode) throws Exception {
+    public void fetchAllAndGenerate(String mode, List<String> extraLinks) throws Exception {
         Set<URI> discovered = new HashSet<>();
 
         for (String link : DOC_LINKS) {
+            // if extraLinks provided, skip falling back until after DOC_LINKS processed
             URI uri = URI.create(link);
             try {
                 System.err.println("Fetching docs page: " + uri);
@@ -109,8 +115,56 @@ public class FetchAndGenerateOpenApiDocs {
                     Path emb = tryExtractEmbeddedJson(r.body, uri);
                     if (emb != null) discovered.add(emb.toUri());
                 }
+                    // As a fallback, if the original URI had a 'url=' query param pointing
+                    // at a specfile, try to fetch that spec directly (some servers redirect
+                    // the docs page to a single spec and do not expose others via HTML links).
+                    try {
+                        Pattern p = Pattern.compile("[?&]url=([^#&]+)", Pattern.CASE_INSENSITIVE);
+                        Matcher m = p.matcher(uri.toString());
+                        if (m.find()) {
+                            String specPath = m.group(1);
+                            URI direct = URI.create(uri.getScheme() + "://" + uri.getHost() + (uri.getPort() != -1 ? ":" + uri.getPort() : "") + uri.getPath() + specPath);
+                            System.err.println("Attempting direct fetch of spec: " + direct);
+                            FetchResult dr = fetchWithAuth(direct);
+                            if (dr.isJson()) {
+                                Path out = saveJson(direct, dr.body);
+                                discovered.add(out.toUri());
+                            }
+                        }
+                    } catch (Exception ignored) {}
             } catch (Exception ex) {
                 System.err.println("Failed to fetch " + uri + " : " + ex.getMessage());
+            }
+        }
+
+        // Fetch any explicit additional URLs provided on the command line
+        if (extraLinks != null) {
+            for (String lnk : extraLinks) {
+            try {
+                URI uri = URI.create(lnk);
+                System.err.println("Fetching extra docs page: " + uri);
+                FetchResult r = fetchWithAuth(uri);
+                if (r.isJson()) {
+                    Path out = saveJson(uri, r.body);
+                    discovered.add(out.toUri());
+                } else if (r.isHtml()) {
+                    List<URI> links = extractJsonLinks(uri, r.body);
+                    for (URI u : links) {
+                        try {
+                            FetchResult rr = fetchWithAuth(u);
+                            if (rr.isJson()) {
+                                Path out = saveJson(u, rr.body);
+                                discovered.add(out.toUri());
+                            } else if (rr.isHtml()) {
+                                Path out = tryExtractEmbeddedJson(rr.body, u);
+                                if (out != null) discovered.add(out.toUri());
+                            }
+                        } catch (Exception ex) { System.err.println("Failed to fetch discovered json: " + ex.getMessage()); }
+                    }
+                    Path emb = tryExtractEmbeddedJson(r.body, uri);
+                    if (emb != null) discovered.add(emb.toUri());
+                }
+            } catch (Exception ex) { System.err.println("Failed to fetch extra link " + lnk + " : " + ex.getMessage()); }
             }
         }
 

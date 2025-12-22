@@ -1,1 +1,12 @@
+com/example/flowable/GeneratedProcessIntegrationTest.class
 com/example/flowable/GeneratedOpenApiIntegrationTest.class
+com/example/flowable/ExamplesIntegrationTest.class
+com/example/flowable/DeploymentCmmnIntegrationTest.class
+com/example/flowable/ExamplesIntegrationTest$1.class
+com/example/flowable/TestCaseCreatorDelegate.class
+com/example/flowable/GeneratedCaseIntegrationTest.class
+com/example/flowable/TestAssignmentCreatorDelegate.class
+com/example/flowable/GeneratedRepositoryIntegrationTest.class
+com/example/flowable/TestCleanupHelper.class
+com/example/flowable/DeploymentIntegrationTest.class
+com/example/flowable/GeneratedDecisionIntegrationTest.class

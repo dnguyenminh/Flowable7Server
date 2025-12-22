@@ -88,7 +88,13 @@ public class ExamplesIntegrationTest {
             "  <cmmn:case id=\"skipTracingCaseMinimal\" name=\"Skip Tracing Case (minimal)\">\n" +
             "    <cmmn:casePlanModel id=\"casePlanModel_skip\">\n" +
             "      <cmmn:planItem id=\"pi_skip_task\" definitionRef=\"humanTask_skip\"/>\n" +
+            "      <cmmn:planItem id=\"pi_process\" definitionRef=\"processTask_file\"/>\n" +
             "      <cmmn:humanTask id=\"humanTask_skip\" name=\"Skip Tracing Task\" flowable:assignee=\"operator\"/>\n" +
+            "      <cmmn:processTask id=\"processTask_file\" name=\"Process File Logic\" processRef=\"process_bulk_file_handling\">\n" +
+            "        <cmmn:extensionElements>\n" +
+            "          <flowable:in source=\"fileId\" target=\"fileId\" />\n" +
+            "        </cmmn:extensionElements>\n" +
+            "      </cmmn:processTask>\n" +
             "    </cmmn:casePlanModel>\n" +
             "  </cmmn:case>\n" +
             "</cmmn:definitions>\n";
@@ -113,8 +119,8 @@ public class ExamplesIntegrationTest {
         HttpServer server = startStubServer(8080);
         try {
             // Start the CMMN case with variables
-                var builder = cmmnRuntimeService.createCaseInstanceBuilder()
-                    .caseDefinitionKey("skipTracingCase")
+                    var builder = cmmnRuntimeService.createCaseInstanceBuilder()
+                        .caseDefinitionKey("bulkUploadCase")
                     .variable("supporter", "user")
                     .variable("fileId", "file-1");
             var ci = builder.start();
@@ -130,12 +136,42 @@ public class ExamplesIntegrationTest {
             assertThat(planItemCount).as("Plan item instances should be created").isGreaterThan(0);
 
             var planItems = cmmnRuntimeService.createPlanItemInstanceQuery().caseInstanceId(ci.getId()).list();
+            // Debug print to inspect which plan items exist
+            System.err.println("DEBUG: plan items for case " + ci.getId() + " -> " + planItems.stream().map(pi -> pi.getElementId()).collect(java.util.stream.Collectors.joining(",")));
 
             // Find the process plan item (pi_process) and trigger it to start the BPMN process
-            var processPlan = cmmnRuntimeService.createPlanItemInstanceQuery().caseInstanceId(ci.getId()).list().stream()
+                // Wait for the process plan item to be created (it may be created after the import task completes)
+                org.flowable.cmmn.api.runtime.PlanItemInstance processPlan = null;
+                for (int i = 0; i < 30; i++) {
+                processPlan = cmmnRuntimeService.createPlanItemInstanceQuery().caseInstanceId(ci.getId()).list().stream()
                     .filter(pi -> "pi_process".equals(pi.getElementId()))
                     .findFirst().orElse(null);
-            assertThat(processPlan).as("Process plan item (pi_process) should be present").isNotNull();
+                if (processPlan != null) break;
+                Thread.sleep(200);
+                }
+                assertThat(processPlan).as("Process plan item (pi_process) should be present").isNotNull();
+                if (processPlan == null) {
+                    // If the process plan item didn't appear, try completing the import task
+                    if (cmmnTaskService != null) {
+                        java.util.List<org.flowable.task.api.Task> tasks = cmmnTaskService.createTaskQuery().taskName("Import Excel File").list();
+                        if (!tasks.isEmpty()) {
+                            org.flowable.task.api.Task t = tasks.get(0);
+                            if (t.getAssignee() == null) {
+                                cmmnTaskService.setAssignee(t.getId(), "user");
+                            }
+                            cmmnTaskService.claim(t.getId(), "user");
+                            cmmnTaskService.complete(t.getId());
+                        }
+                    }
+                    // Wait again for the process plan item to appear after completion
+                    for (int j = 0; j < 30; j++) {
+                        processPlan = cmmnRuntimeService.createPlanItemInstanceQuery().caseInstanceId(ci.getId()).list().stream()
+                                .filter(pi -> "pi_process".equals(pi.getElementId()))
+                                .findFirst().orElse(null);
+                        if (processPlan != null) break;
+                        Thread.sleep(200);
+                    }
+                }
 
                 // Create a minimal BPMN process for the test that sets `assignmentList` via a delegate and then multi-instantiates a callActivity
                 String minimalProc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

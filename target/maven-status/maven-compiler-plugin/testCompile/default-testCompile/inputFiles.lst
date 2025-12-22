@@ -1,8 +1,16 @@
-/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/CmmnApiCaseCreationIT.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/DeploymentCmmnIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/DeploymentIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/ExamplesIntegrationTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableFeignClient.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableFeignClientCmmnDeploymentTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableFeignClientDeploymentTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableFeignClientTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableRestIT.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableTestUtils.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableTestUtilsAwaitPostTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableTestUtilsFeignAwaitTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableTestUtilsHistoryAwaitTest.java
+/home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/FlowableTestUtilsTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedCaseIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedDecisionIntegrationTest.java
 /home/ducnm/projects/java/Flowable7Server/src/test/java/com/example/flowable/GeneratedOpenApiIntegrationTest.java

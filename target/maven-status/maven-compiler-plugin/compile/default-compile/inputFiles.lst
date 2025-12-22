@@ -2,5 +2,6 @@
 /home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/SampleRunner.java
 /home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/tools/FetchAndGenerateOpenApiDocs.java
 /home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/tools/MarkdownToPdf.java
+/home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/tools/MergeSplitPdfs.java
 /home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/tools/OpenApiToTestsGenerator.java
 /home/ducnm/projects/java/Flowable7Server/src/main/java/com/example/flowable/tools/SplitSwaggerMdByPath.java

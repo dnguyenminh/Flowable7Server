@@ -629,6 +629,7 @@ public class SplitSwaggerMdByPath {
         table.add("");
         table.add("| Name | In | Required | Schema | Description | Example |");
         table.add("|---|---|---:|---|---|---|");
+        List<String> extraExamples = new ArrayList<>();
         for (JsonNode p : paramsList) {
             String name = p.path("name").asText("");
             String in = p.path("in").asText("");
@@ -645,8 +646,21 @@ public class SplitSwaggerMdByPath {
             if (p.has("example")) example = prettyJson(p.path("example"));
             else if (!schema.isMissingNode() && schema.has("example")) example = prettyJson(schema.path("example"));
             else if (!schema.isMissingNode() && schema.has("default")) example = prettyJson(schema.path("default"));
-            table.add(String.format("| %s | %s | %s | %s | %s | %s |", name, in, req ? "yes" : "", schemaText, desc.replaceAll("\n"," ").trim(), example));
+            String exampleShort = example;
+            if (example.length() > 200) {
+                exampleShort = example.substring(0, 200).replaceAll("\n", " ") + "... (truncated)";
+                // Prepare expanded example block to append after the table
+                extraExamples.add("");
+                extraExamples.add("> **Expanded example for parameter `" + name + "`**");
+                extraExamples.add("");
+                extraExamples.add("```json");
+                extraExamples.add(example);
+                extraExamples.add("```");
+            }
+            table.add(String.format("| %s | %s | %s | %s | %s | %s |", name, in, req ? "yes" : "", schemaText, desc.replaceAll("\n"," ").trim(), exampleShort));
         }
+        // append any expanded examples after the table
+        if (!extraExamples.isEmpty()) table.addAll(extraExamples);
         return table;
     }
 

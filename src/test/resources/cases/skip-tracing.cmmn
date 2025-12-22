@@ -77,26 +77,31 @@
 
       <cmmndi:CMMNShape id="DI_Exit_Reallocate" cmmnElementRef="exit_reallocate">
         <dc:Bounds x="240" y="205" width="20" height="28" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
       
       <cmmndi:CMMNShape id="DI_Entry_Restart" cmmnElementRef="entry_restart">
         <dc:Bounds x="140" y="205" width="20" height="28" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
 
       <cmmndi:CMMNShape id="DI_Entry_SelectNew" cmmnElementRef="entry_select_new">
         <dc:Bounds x="370" y="205" width="20" height="28" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNShape>
 
       <cmmndi:CMMNEdge id="Edge_Btn_Exit" cmmnElementRef="onPart_reallocate" sourceCMMNElementRef="pi_reallocate_btn" targetCMMNElementRef="exit_reallocate">
         <di:waypoint x="315" y="320" />
         <di:waypoint x="315" y="280" />
         <di:waypoint x="255" y="230" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNEdge>
 
       <cmmndi:CMMNEdge id="Edge_Btn_Enter" cmmnElementRef="onPart_reallocate" sourceCMMNElementRef="pi_reallocate_btn" targetCMMNElementRef="entry_select_new">
         <di:waypoint x="315" y="320" />
         <di:waypoint x="315" y="280" />
         <di:waypoint x="375" y="230" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNEdge>
 
       <cmmndi:CMMNEdge id="Edge_New_Restart" cmmnElementRef="onPart_new_selected" sourceCMMNElementRef="pi_select_new" targetCMMNElementRef="entry_restart">
@@ -104,6 +109,7 @@
         <di:waypoint x="430" y="140" />
         <di:waypoint x="150" y="140" />
         <di:waypoint x="150" y="205" />
+        <cmmndi:CMMNLabel />
       </cmmndi:CMMNEdge>
 
     </cmmndi:CMMNDiagram>

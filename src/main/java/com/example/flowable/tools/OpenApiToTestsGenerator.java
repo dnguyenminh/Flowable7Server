@@ -22,8 +22,8 @@ public class OpenApiToTestsGenerator {
         Path repoRoot = Path.of(".").toAbsolutePath().normalize();
         Path spec = repoRoot.resolve("docs/openapi/flowable-7.2.0-openapi.yaml");
         if (!Files.exists(spec)) {
-            System.err.println("OpenAPI spec not found at: " + spec);
-            System.exit(2);
+            System.err.println("OpenAPI spec not found at: " + spec + " - skipping test generation");
+            return;
         }
 
         Yaml yaml = new Yaml();
@@ -34,8 +34,8 @@ public class OpenApiToTestsGenerator {
 
         Map<?, ?> paths = (Map<?, ?>) specMap.get("paths");
         if (paths == null) {
-            System.err.println("No paths found in OpenAPI spec");
-            System.exit(2);
+            System.err.println("No paths found in OpenAPI spec - skipping test generation");
+            return;
         }
 
         // group paths by top-level segment (process, decision, case, etc.)

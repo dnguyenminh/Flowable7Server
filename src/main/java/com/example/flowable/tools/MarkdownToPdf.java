@@ -52,24 +52,50 @@ import java.io.FilterOutputStream;
 public class MarkdownToPdf {
 
     public static void main(String[] args) {
-        // if (args.length != 2) {
-        //     System.err.println("Usage: java MarkdownToPdf <input.md> <output.pdf>");
-        //     System.exit(2);
-        // }
+        try {
+            if (args.length == 1) {
+                // single file mode: arg is input file
+                File input = new File(args[0]);
+                File output = new File(args[0].replaceAll("\\.md$", ".pdf"));
+                convert(input, output);
+                return;
+            } else if (args.length == 0) {
+                // no args: if split dir exists, render all md files inside
+                File splitDir = new File("docs/openapi/split");
+                if (splitDir.exists() && splitDir.isDirectory()) {
+                    File[] mds = splitDir.listFiles((d,n) -> n.endsWith(".md"));
+                    if (mds != null) {
+                        for (File md : mds) {
+                            File out = new File(md.getParentFile(), md.getName().replaceAll("\\.md$", ".pdf"));
+                            convert(md, out);
+                        }
+                        return;
+                    }
+                }
+                // fallback: original single file
+                File input = new File("docs/openapi/flowable-swagger-cmmn.md");
+                File output = new File("docs/openapi/flowable-swagger-cmmn.pdf");
+                convert(input, output);
+                return;
+            } else {
+                System.err.println("Usage: java MarkdownToPdf [<input.md>]  (no args renders docs/openapi/split/*.md)");
+                System.exit(2);
+            }
+        } catch (Exception e) {
+            System.err.println("Conversion failed: " + e.getMessage());
+            e.printStackTrace(System.err);
+            System.exit(1);
+        }
+    }
 
-        // File input = new File(args[0]);
-        // File output = new File(args[1]);
-        File input = new File("docs/openapi/flowable-swagger-cmmn.md");
-        File output = new File("docs/openapi/flowable-swagger-cmmn.pdf");
-
+    private static void convert(File input, File output) throws Exception {
         if (!input.exists() || !input.isFile()) {
             System.err.println("Input file not found: " + input.getAbsolutePath());
-            System.exit(3);
+            return;
         }
-
-        try {
-            System.err.print("[1/5] Reading input... ");
-            String md = readFileUtf8(input);
+        System.err.println("Converting: " + input + " -> " + output);
+        System.err.print("[1/5] Reading input... ");
+        String md = readFileUtf8(input);
             System.err.println("done");
 
             // Configure flexmark
@@ -82,8 +108,15 @@ public class MarkdownToPdf {
 
             // Basic HTML wrapper and CSS; tweak for large docs (page-breaks, font-size, etc.)
             String css = "body { font-family: Arial, Helvetica, sans-serif; font-size: 11pt; margin: 20px; }"
-                       + "pre { white-space: pre-wrap; word-wrap: break-word; }"
-                       + "code { font-family: monospace; background:#f4f4f4; padding:2px 4px; }";
+                       + "pre { white-space: pre-wrap; word-wrap: break-word; background:#f8f8f8; padding:8px; border-radius:4px; }"
+                       + "code { font-family: monospace; background:#f4f4f4; padding:2px 4px; font-size:9pt; }"
+                       + "table { border-collapse: collapse; width: 100%; table-layout: fixed; word-wrap: break-word; }"
+                       + "th, td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }"
+                       + "th { background: #f6f6f6; font-weight: bold; }"
+                       + "td { white-space: pre-wrap; word-wrap: break-word; }"
+                       + "thead { display: table-header-group; }"
+                       + "h1, h2 { page-break-after: avoid; }"
+                       + "h2 { page-break-before: always; padding-top: 12pt; }";
 
             // Ensure we have well-formed XHTML for OpenHTMLToPDF (self-closing meta,
             // xmlns, and strip possible BOM leading chars).
@@ -189,11 +222,7 @@ public class MarkdownToPdf {
             }
 
             System.out.println("Wrote PDF: " + output.getAbsolutePath());
-        } catch (Exception e) {
-            System.err.println("Conversion failed: " + e.getMessage());
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
+        
     }
 
     private static boolean tryRenderChunk(int chunkIndex, int totalChunks, String html, String baseUri, File outFile, long expectedBytes) throws Exception {
@@ -270,7 +299,7 @@ public class MarkdownToPdf {
     }
 
     // Counts bytes written through the stream
-    private static class CountingOutputStream extends FilterOutputStream implements AutoCloseable {
+    private static class CountingOutputStream extends FilterOutputStream {
         private volatile long written = 0L;
 
         CountingOutputStream(OutputStream out) { super(out); }

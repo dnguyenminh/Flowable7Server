@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cmmn:definitions xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:cmmn="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:flowable="http://flowable.org/cmmn" id="definitions_bulk" targetNamespace="http://flowable.org/cmmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
-  <cmmn:case id="skipTracingCase" name="Bulk Upload Case">
+  <cmmn:case id="bulkUploadCase" name="Bulk Upload Case">
     <cmmn:casePlanModel id="casePlanModel_bulk" name="Bulk Upload Request">
       <cmmn:planItem id="pi_import" definitionRef="humanTask_import">
-        <cmmn:entryCriterion id="entry_restart_import" sentryRef="sentry_restart_import" />
         <cmmn:exitCriterion id="exit_reassign_import" sentryRef="sentry_reassign_btn" />
       </cmmn:planItem>
       <cmmn:planItem id="pi_reassign_btn" definitionRef="eventListener_reassign" />
